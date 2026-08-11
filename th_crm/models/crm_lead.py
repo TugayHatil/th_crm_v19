@@ -35,12 +35,12 @@ class CrmLead(models.Model):
     year_of_commit = fields.Date(string='Year of Commit')
 
     # # Competition
-    # service_competitor_ids = fields.Many2many('res.partner', string='Service-Competitors')
-    # tech_competitor_ids = fields.Many2many('res.partner', string='Tech-Competitors')
+    service_competitor_ids = fields.Many2many('res.partner', string='Service-Competitors')
+    tech_competitor_ids = fields.Many2many('res.partner', string='Tech-Competitors')
 
     # # Qualification Details
     authority = fields.Char(string='AUTHORITY:Who is Executive Sponsor? Who Own Funds?Who Sign Contract?')
     budget = fields.Char(string='BUDGET:Who owns the Budget? Is it funded for Outside Purchase?')
-    # lead_source_details = fields.Html(string='Details for Lead Source')
-    # risk = fields.Html(string='RISK:General Risks? Product Risks:')
-    # timing = fields.Html(string='TIMING:Timeframe? Why Buy Now?')
+    lead_source_details = fields.Html(string='Details for Lead Source')
+    risk = fields.Html(string='RISK:General Risks? Product Risks:')
+    timing = fields.Html(string='TIMING:Timeframe? Why Buy Now?')

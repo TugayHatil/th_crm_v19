@@ -37,6 +37,15 @@
                                 <group>
                                     <field name="authority"/>
                                     <field name="budget"/>
+                                    <field name="lead_source_details"/>
+                                    <field name="risk"/>
+                                    <field name="timing"/>
+                                </group>
+                            </group>
+                            <group string="Competition">
+                                <group>
+                                    <field name="service_competitor_ids" widget="many2many_tags"/>
+                                    <field name="tech_competitor_ids" widget="many2many_tags"/>
                                 </group>
                             </group>
                         </page>
