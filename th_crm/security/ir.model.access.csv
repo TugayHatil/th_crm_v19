@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_th_crm_informatica_solution_user,th.crm.informatica.solution.user,model_th_crm_informatica_solution,base.group_user,1,1,1,0

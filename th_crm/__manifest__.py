@@ -4,11 +4,11 @@
     'name': 'TH CRM',
     'version': '19.0.1.0.0',
     'category': 'CRM',
-    'summary': 'Add DR No field to CRM leads',
+    'summary': 'Extend CRM lead qualification fields',
     'description': """
         TH CRM Module
         =============
-        This module adds a DR No field to the CRM Lead model.
+        This module extends the CRM Lead model with additional qualification fields.
     """,
     'author': 'TugayHatil',
     'website': 'https://github.com/TugayHatil/th_crm_v19',
@@ -16,6 +16,8 @@
     'depends': ['crm'],
     'data': [
         'views/crm_lead_views.xml',
+        'views/informatica_solution_views.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': False,
