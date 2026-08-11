@@ -7,14 +7,11 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-                <field name="tag_ids" position="after">
-                    <field name="dr_no"/>
-                </field>
-
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
                     <group string="Qualification / Opportunity">
                         <group>
+                            <field name="dr_no"/>
                             <field name="sequence_enrollment"/>
                             <field name="second_contact_person_id"/>
                             <field name="hyperscaler"/>
@@ -36,6 +33,7 @@
                             <field name="authority"/>
                             <field name="budget"/>
                             <field name="lead_source_details"/>
+                            <field name="risk"/>
                         </group>
                     </group>
                 </xpath>
