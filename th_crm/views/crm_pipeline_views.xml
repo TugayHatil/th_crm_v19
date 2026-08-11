@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- CRM Pipeline Tree View -->
+        <!-- CRM Pipeline List View -->
         <record id="view_crm_pipeline_tree" model="ir.ui.view">
-            <field name="name">crm.pipeline.tree</field>
+            <field name="name">crm.pipeline.list</field>
             <field name="model">crm.pipeline</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
-                </tree>
+                </list>
             </field>
         </record>
 
