@@ -14,11 +14,6 @@
                 </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
-                    <group string="Pipeline">
-                        <group>
-                            <field name="pipeline_id"/>
-                        </group>
-                    </group>
                     <group string="Qualification / Opportunity">
                         <group>
                             <field name="dr_no"/>
