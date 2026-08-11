@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- CRM Lead List View Inheritance -->
-        <record id="view_crm_lead_list_inherit" model="ir.ui.view">
-            <field name="name">crm.lead.list.inherit</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_lead_view_tree"/>
-            <field name="arch" type="xml">
-                <field name="expected_revenue" position="before">
-                    <field name="pipeline_id" optional="hide"/>
-                </field>
-            </field>
-        </record>
-
         <!-- CRM Lead Form View Inheritance -->
         <record id="view_crm_lead_form_inherit" model="ir.ui.view">
             <field name="name">crm.lead.form.inherit</field>
