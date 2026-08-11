@@ -34,11 +34,11 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!-- Informatica Solution Menu -->
-        <menuitem id="menu_th_crm_informatica_solution" 
+        <!-- Informatica Solution Menu - Disabled for testing -->
+        <!-- <menuitem id="menu_th_crm_informatica_solution" 
                   name="Informatica Solutions" 
                   parent="crm.menu_crm_config_lead"
                   action="action_th_crm_informatica_solution"
-                  sequence="10"/>
+                  sequence="10"/> -->
     </data>
 </odoo>

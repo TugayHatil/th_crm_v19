@@ -16,8 +16,8 @@
     'depends': ['crm'],
     'data': [
         'views/crm_lead_views.xml',
-        # 'views/informatica_solution_views.xml',
-        # 'security/ir.model.access.csv',
+        'views/informatica_solution_views.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': False,
