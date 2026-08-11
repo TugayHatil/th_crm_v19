@@ -22,14 +22,6 @@
         'security/ir.model.access.csv',
         # 'views/informatica_solution_views.xml',
     ],
-    'assets': {
-        'web.assets_backend': [
-            'th_crm/static/src/js/pipeline_selector.js',
-            'th_crm/static/src/xml/pipeline_selector.xml',
-            'th_crm/static/src/js/crm_pipeline_control_panel.js',
-            'th_crm/static/src/xml/control_panel_patch.xml',
-        ],
-    },
     'installable': True,
     'application': False,
     'auto_install': False,
