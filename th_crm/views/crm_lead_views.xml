@@ -7,6 +7,11 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="before">
+                    <header>
+                        <field name="pipeline_id"/>
+                    </header>
+                </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
                     <group string="Pipeline">
