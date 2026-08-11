@@ -10,6 +10,33 @@
                 <field name="tag_ids" position="after">
                     <field name="dr_no"/>
                 </field>
+
+                <!-- Add simple fields for testing -->
+                <xpath expr="//form/sheet" position="inside">
+                    <notebook>
+                        <page string="Qualification">
+                            <group string="Qualification / Opportunity">
+                                <group>
+                                    <field name="sequence_enrollment"/>
+                                </group>
+                            </group>
+                            <group string="Commercial / Business">
+                                <group>
+                                    <field name="gcp_billing_account"/>
+                                    <field name="ps_opp_exist"/>
+                                    <field name="training_opp_exist"/>
+                                    <field name="year_of_commit"/>
+                                </group>
+                            </group>
+                            <group string="Qualification Details">
+                                <group>
+                                    <field name="authority"/>
+                                    <field name="budget"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
             </field>
         </record>
     </data>
