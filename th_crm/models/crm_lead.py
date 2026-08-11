@@ -11,11 +11,11 @@ class CrmLead(models.Model):
     # Qualification / Opportunity
     sequence_enrollment = fields.Boolean(string='Sequence enrollment')
     # second_contact_person_id = fields.Many2one('res.partner', string='2nd Contact Person')
-    # hyperscaler = fields.Selection([
-    #     ('ms_azure', 'MS Azure'),
-    #     ('gcp', 'GCP'),
-    #     ('aws', 'AWS'),
-    # ], string='Hyperscaler')
+    hyperscaler = fields.Selection([
+        ('ms_azure', 'MS Azure'),
+        ('gcp', 'GCP'),
+        ('aws', 'AWS'),
+    ], string='Hyperscaler')
     informatica_solution_id = fields.Selection([
         ('data_integration', 'Data Integration'),
         ('data_quality', 'Data Quality'),
@@ -23,15 +23,15 @@ class CrmLead(models.Model):
         ('master_data_management', 'Master Data Management'),
         ('data_governance', 'Data Governance'),
     ], string='Informatica Solution')
-    # technology = fields.Selection([
-    #     ('analytics', 'Analytics'),
-    #     ('data', 'Data'),
-    # ], string='Technology')
-    # selection_criterias = fields.Selection([
-    #     ('technical_win', 'Technical Win'),
-    #     ('cost_advantage', 'Cost Advantage'),
-    #     ('delivery_capabilities', 'Delivery Capabilities'),
-    # ], string='Selection Criterias')
+    technology = fields.Selection([
+        ('analytics', 'Analytics'),
+        ('data', 'Data'),
+    ], string='Technology')
+    selection_criterias = fields.Selection([
+        ('technical_win', 'Technical Win'),
+        ('cost_advantage', 'Cost Advantage'),
+        ('delivery_capabilities', 'Delivery Capabilities'),
+    ], string='Selection Criterias')
 
     # Commercial / Business
     gcp_billing_account = fields.Char(string='GCP Billing Account')

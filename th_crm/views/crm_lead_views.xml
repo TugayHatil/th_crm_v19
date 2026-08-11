@@ -11,12 +11,15 @@
                     <field name="dr_no"/>
                 </field>
 
-                <!-- Add simple fields only -->
+                <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
                     <group string="Qualification / Opportunity">
                         <group>
                             <field name="sequence_enrollment"/>
+                            <field name="hyperscaler"/>
                             <field name="informatica_solution_id"/>
+                            <field name="technology"/>
+                            <field name="selection_criterias"/>
                         </group>
                     </group>
                     <group string="Commercial / Business">
