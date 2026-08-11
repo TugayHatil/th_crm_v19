@@ -7,8 +7,10 @@
             <field name="model">crm.stage</field>
             <field name="inherit_id" ref="crm.crm_stage_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="inside">
-                    <field name="pipeline_ids" widget="many2many_tags"/>
+                <xpath expr="//form/sheet" position="inside">
+                    <group>
+                        <field name="pipeline_ids" widget="many2many_tags"/>
+                    </group>
                 </xpath>
             </field>
         </record>
