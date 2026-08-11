@@ -19,6 +19,9 @@
                                 <group>
                                     <field name="sequence_enrollment"/>
                                     <field name="second_contact_person_id"/>
+                                    <field name="hyperscaler"/>
+                                    <field name="technology"/>
+                                    <field name="selection_criterias"/>
                                 </group>
                             </group>
                             <group string="Commercial / Business">
