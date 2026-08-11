@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- CRM Pipeline Tree View -->
+        <record id="view_crm_pipeline_tree" model="ir.ui.view">
+            <field name="name">crm.pipeline.tree</field>
+            <field name="model">crm.pipeline</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- CRM Pipeline Form View -->
+        <record id="view_crm_pipeline_form" model="ir.ui.view">
+            <field name="name">crm.pipeline.form</field>
+            <field name="model">crm.pipeline</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- CRM Pipeline Action -->
+        <record id="action_crm_pipeline" model="ir.actions.act_window">
+            <field name="name">Pipelines</field>
+            <field name="res_model">crm.pipeline</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first pipeline!
+                </p>
+            </field>
+        </record>
+
+        <!-- CRM Pipeline Menu Item -->
+        <menuitem id="menu_crm_pipeline" name="Pipelines" parent="crm.crm_menu_root" action="action_crm_pipeline" sequence="5"/>
+    </data>
+</odoo>
