@@ -41,8 +41,8 @@ class CrmLead(models.Model):
     year_of_commit = fields.Date(string='Year of Commit')
 
     # Competition
-    service_competitor_ids = fields.Many2many('res.partner', string='Service-Competitors')
-    tech_competitor_ids = fields.Many2many('res.partner', string='Tech-Competitors')
+    # service_competitor_ids = fields.Many2many('res.partner', string='Service-Competitors')
+    # tech_competitor_ids = fields.Many2many('res.partner', string='Tech-Competitors')
 
     # Qualification Details
     authority = fields.Char(string='AUTHORITY:Who is Executive Sponsor? Who Own Funds?Who Sign Contract?')

@@ -29,12 +29,6 @@
                             <field name="year_of_commit"/>
                         </group>
                     </group>
-                    <group string="Competition">
-                        <group>
-                            <field name="service_competitor_ids" widget="many2many_tags"/>
-                            <field name="tech_competitor_ids" widget="many2many_tags"/>
-                        </group>
-                    </group>
                     <group string="Qualification Details">
                         <group>
                             <field name="authority"/>
