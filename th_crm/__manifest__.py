@@ -17,6 +17,7 @@
     'data': [
         'views/crm_lead_views.xml',
         'views/crm_pipeline_views.xml',
+        'views/crm_stage_views.xml',
         'security/crm_pipeline_security.xml',
         'security/ir.model.access.csv',
         # 'views/informatica_solution_views.xml',
