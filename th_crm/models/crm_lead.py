@@ -10,7 +10,7 @@ class CrmLead(models.Model):
 
     # Qualification / Opportunity
     sequence_enrollment = fields.Boolean(string='Sequence enrollment')
-    # second_contact_person_id = fields.Many2one('res.partner', string='2nd Contact Person')
+    second_contact_person_id = fields.Many2one('res.partner', string='2nd Contact Person')
     hyperscaler = fields.Selection([
         ('ms_azure', 'MS Azure'),
         ('gcp', 'GCP'),
@@ -37,7 +37,7 @@ class CrmLead(models.Model):
     gcp_billing_account = fields.Char(string='GCP Billing Account')
     ps_opp_exist = fields.Boolean(string='PS Opp. Exist')
     training_opp_exist = fields.Boolean(string='Training Opp. Exist')
-    # vendor_subscription_start_date = fields.Many2one('res.partner', string='Vendor Subscription Start Date')
+    vendor_subscription_start_date = fields.Many2one('res.partner', string='Vendor Subscription Start Date')
     year_of_commit = fields.Date(string='Year of Commit')
 
     # Competition
