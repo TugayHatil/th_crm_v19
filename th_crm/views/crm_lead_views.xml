@@ -25,6 +25,7 @@
                             <field name="gcp_billing_account"/>
                             <field name="ps_opp_exist"/>
                             <field name="training_opp_exist"/>
+                            <field name="vendor_subscription_start_date"/>
                             <field name="year_of_commit"/>
                         </group>
                     </group>
