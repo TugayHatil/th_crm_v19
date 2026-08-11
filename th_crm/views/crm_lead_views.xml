@@ -48,18 +48,14 @@
             </field>
         </record>
 
-        <!-- CRM Lead Search View Inheritance -->
-        <record id="view_crm_lead_search_inherit" model="ir.ui.view">
-            <field name="name">crm.lead.search.inherit</field>
+        <!-- CRM Lead Search Panel -->
+        <record id="crm_lead_search_panel" model="ir.ui.view">
+            <field name="name">crm.lead.search.panel</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
             <field name="arch" type="xml">
-                <filter name="salesperson" position="after">
-                    <filter string="Pipeline" name="pipeline" domain="[]" context="{'group_by': 'pipeline_id'}"/>
-                </filter>
-                <field name="user_id" position="after">
-                    <field name="pipeline_id"/>
-                </field>
+                <searchpanel>
+                    <field name="pipeline_id" enable_counters="1"/>
+                </searchpanel>
             </field>
         </record>
     </data>
