@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.ControlPanel" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('o_control_panel')]/div[hasclass('o_control_panel_main_buttons')]" position="before">
+            <div class="o_pipeline_selector_container" t-if="props.resModel === 'crm.lead'">
+                <select class="o_pipeline_select form-control" t-on-change="onPipelineChange">
+                    <option value="">All Pipelines</option>
+                    <option t-foreach="state.pipelines" t-as="pipeline" t-key="pipeline.id" t-att-value="pipeline.id" t-att-selected="state.selectedPipelineId === pipeline.id">
+                        <t t-esc="pipeline.name"/>
+                    </option>
+                </select>
+            </div>
+        </xpath>
+    </t>
+</templates>
