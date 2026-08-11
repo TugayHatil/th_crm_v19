@@ -20,7 +20,6 @@
                                     <field name="sequence_enrollment"/>
                                     <field name="second_contact_person_id"/>
                                     <field name="hyperscaler"/>
-                                    <field name="informatica_solution_id"/>
                                     <field name="technology"/>
                                     <field name="selection_criterias"/>
                                 </group>
