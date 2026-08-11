@@ -47,6 +47,6 @@ class CrmLead(models.Model):
     # Qualification Details
     authority = fields.Char(string='AUTHORITY:Who is Executive Sponsor? Who Own Funds?Who Sign Contract?')
     budget = fields.Char(string='BUDGET:Who owns the Budget? Is it funded for Outside Purchase?')
-    # lead_source_details = fields.Html(string='Details for Lead Source')
+    lead_source_details = fields.Html(string='Details for Lead Source')
     # risk = fields.Html(string='RISK:General Risks? Product Risks:')
     # timing = fields.Html(string='TIMING:Timeframe? Why Buy Now?')

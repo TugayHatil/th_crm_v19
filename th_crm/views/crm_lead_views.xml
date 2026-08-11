@@ -35,6 +35,7 @@
                         <group>
                             <field name="authority"/>
                             <field name="budget"/>
+                            <field name="lead_source_details"/>
                         </group>
                     </group>
                 </xpath>
