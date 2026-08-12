@@ -88,14 +88,15 @@
                 <xpath expr="//field[@name='expected_revenue']" position="before">
                     <field name="planned_revenue_second"/>
                     <field name="value"/>
+                    <field name="currency_id"/>
                 </xpath>
                 <xpath expr="//t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="after">
                     <div class="o_kanban_record_subtitle">
                         <t t-if="record.planned_revenue_second.raw_value">
-                            <div>Dovizli Beklenen Gelir: <field name="planned_revenue_second" widget="monetary"/></div>
+                            <div>Dovizli Beklenen Gelir: <t t-esc="record.planned_revenue_second.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
                         </t>
                         <t t-if="record.value.raw_value">
-                            <div>Value: <field name="value" widget="monetary"/></div>
+                            <div>Value: <t t-esc="record.value.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
                         </t>
                     </div>
                 </xpath>
