@@ -54,6 +54,15 @@ class CrmLead(models.Model):
     # Second Currency
     currency_id = fields.Many2one('res.currency', string='Currency')
     planned_revenue_second = fields.Monetary('Revenue Other Currency', currency_field='currency_id', tracking=True)
+    value = fields.Float('Value (Revenue * Probability)', compute='_compute_value', store=True)
+
+    @api.depends('planned_revenue_second', 'probability')
+    def _compute_value(self):
+        for lead in self:
+            if lead.planned_revenue_second and lead.probability:
+                lead.value = lead.planned_revenue_second * (lead.probability / 100)
+            else:
+                lead.value = 0.0
 
     @api.onchange('currency_id', 'planned_revenue_second')
     def _onchange_planned_revenue_second(self):

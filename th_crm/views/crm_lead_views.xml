@@ -56,6 +56,7 @@
                         <group>
                             <field name="currency_id"/>
                             <field name="planned_revenue_second"/>
+                            <field name="value"/>
                         </group>
                     </group>
                 </xpath>
