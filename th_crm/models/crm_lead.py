@@ -54,3 +54,14 @@ class CrmLead(models.Model):
     # Second Currency
     currency_id = fields.Many2one('res.currency', string='Currency')
     planned_revenue_second = fields.Monetary('Revenue Other Currency', currency_field='currency_id', tracking=True)
+
+    @api.onchange('currency_id', 'planned_revenue_second')
+    def _onchange_planned_revenue_second(self):
+        if self.currency_id and self.planned_revenue_second:
+            company_currency = self.company_id.currency_id if self.company_id else self.env.company.currency_id
+            self.expected_revenue = self.currency_id._convert(
+                self.planned_revenue_second,
+                company_currency,
+                self.company_id or self.env.company,
+                self.create_date or fields.Date.today()
+            )
