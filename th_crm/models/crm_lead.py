@@ -58,9 +58,10 @@ class CrmLead(models.Model):
     @api.onchange('currency_id', 'planned_revenue_second')
     def _onchange_planned_revenue(self):
         if self.currency_id and self.planned_revenue_second:
+            company_currency = self.company_id.currency_id if self.company_id else self.env.company.currency_id
             self.planned_revenue = self.currency_id._convert(
                 self.planned_revenue_second,
-                self.company_currency_id,
-                self.company_id,
+                company_currency,
+                self.company_id or self.env.company,
                 self.create_date or fields.Date.today()
             )
