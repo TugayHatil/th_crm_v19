@@ -13,10 +13,12 @@
                         <group>
                             <field name="dr_no"/>
                             <field name="sequence_enrollment"/>
-                            <field name="second_contact_person_id"/>
                             <field name="hyperscaler"/>
-                            <field name="informatica_solution_id"/>
                             <field name="technology"/>
+                        </group>
+                        <group>
+                            <field name="second_contact_person_id"/>
+                            <field name="informatica_solution_id"/>
                             <field name="selection_criterias"/>
                         </group>
                     </group>
@@ -24,22 +26,28 @@
                         <group>
                             <field name="gcp_billing_account"/>
                             <field name="ps_opp_exist"/>
-                            <field name="training_opp_exist"/>
-                            <field name="vendor_subscription_start_date"/>
                             <field name="year_of_commit"/>
+                        </group>
+                        <group>
+                            <field name="vendor_subscription_start_date"/>
+                            <field name="training_opp_exist"/>
                         </group>
                     </group>
                     <group string="Competition">
                         <group>
                             <field name="service_competitor_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
                             <field name="tech_competitor_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                     <group string="Qualification Details">
                         <group>
                             <field name="authority"/>
-                            <field name="budget"/>
                             <field name="lead_source_details"/>
+                        </group>
+                        <group>
+                            <field name="budget"/>
                             <field name="risk"/>
                             <field name="timing"/>
                         </group>
