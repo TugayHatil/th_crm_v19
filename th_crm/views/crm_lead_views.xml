@@ -52,6 +52,12 @@
                             <field name="timing"/>
                         </group>
                     </group>
+                    <group string="Second Currency">
+                        <group>
+                            <field name="currency_id"/>
+                            <field name="planned_revenue_second"/>
+                        </group>
+                    </group>
                 </xpath>
             </field>
         </record>
