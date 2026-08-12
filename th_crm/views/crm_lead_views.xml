@@ -7,16 +7,12 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-                <!-- Add Second Currency fields as a separate group before expected_revenue -->
+                <!-- Add Second Currency fields as a separate row before expected_revenue -->
                 <xpath expr="//field[@name='expected_revenue']" position="before">
                     <group>
                         <group>
                             <field name="currency_id"/>
-                        </group>
-                        <group>
                             <field name="planned_revenue_second"/>
-                        </group>
-                        <group>
                             <field name="value"/>
                         </group>
                     </group>
