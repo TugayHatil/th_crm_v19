@@ -89,16 +89,6 @@
                     <field name="planned_revenue_second"/>
                     <field name="value"/>
                 </xpath>
-                <xpath expr="//div[@name='expected_revenue']" position="before">
-                    <div class="o_kanban_record_subtitle">
-                        <span class="oe_kanban_record_subtitle">Dovizli Beklenen Gelir: </span>
-                        <field name="planned_revenue_second" widget="monetary"/>
-                    </div>
-                    <div class="o_kanban_record_subtitle">
-                        <span class="oe_kanban_record_subtitle">Value: </span>
-                        <field name="value" widget="monetary"/>
-                    </div>
-                </xpath>
             </field>
         </record>
     </data>
