@@ -89,26 +89,6 @@
                     <field name="planned_revenue_second"/>
                     <field name="value"/>
                 </xpath>
-                <xpath expr="//t[@t-name='kanban-box']" position="inside">
-                    <t t-if="record.planned_revenue_second.raw_value">
-                        <div class="o_kanban_record_subtitle">
-                            <span>Dovizli Beklenen Gelir: </span>
-                            <t t-esc="record.planned_revenue_second.raw_value"/>
-                            <t t-if="record.currency_id.raw_value">
-                                <t t-esc="record.currency_id.raw_value.symbol"/>
-                            </t>
-                        </div>
-                    </t>
-                    <t t-if="record.value.raw_value">
-                        <div class="o_kanban_record_subtitle">
-                            <span>Value: </span>
-                            <t t-esc="record.value.raw_value"/>
-                            <t t-if="record.currency_id.raw_value">
-                                <t t-esc="record.currency_id.raw_value.symbol"/>
-                            </t>
-                        </div>
-                    </t>
-                </xpath>
             </field>
         </record>
     </data>
