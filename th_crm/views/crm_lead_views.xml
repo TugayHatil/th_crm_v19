@@ -10,19 +10,19 @@
                 <!-- Add Second Currency fields in h2 with labels before existing h2 -->
                 <xpath expr="//h2" position="before">
                     <h2 class="row g-0 pb-3 pb-sm-4">
-                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                        <div class="col-2 pb-2 pb-md-0">
                             <label class="o_form_label oe_edit_only" for="currency_id">Currency</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="currency_id" class="oe_inline"/>
                             </div>
                         </div>
-                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                        <div class="col-5 pb-2 pb-md-0">
                             <label class="o_form_label oe_edit_only" for="planned_revenue_second">Revenue Other Currency</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="planned_revenue_second" class="oe_inline"/>
                             </div>
                         </div>
-                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                        <div class="col-5 pb-2 pb-md-0">
                             <label class="o_form_label oe_edit_only" for="value">Value</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="value" class="oe_inline"/>
