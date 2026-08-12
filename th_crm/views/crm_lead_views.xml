@@ -90,17 +90,18 @@
                     <field name="value"/>
                     <field name="currency_id" invisible="1"/>
                 </xpath>
-                <xpath expr="//templates/t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="inside">
-                    <t t-if="record.planned_revenue_second.raw_value or record.value.raw_value">
-                        <t t-if="record.planned_revenue_second.raw_value">
-                            <field name="planned_revenue_second" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <xpath expr="//templates/t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="before">
+                    <div class="o_kanban_card_crm_lead_revenue">
+                        <t t-if="record.planned_revenue_second.raw_value or record.value.raw_value">
+                            <t t-if="record.planned_revenue_second.raw_value">
+                                <field name="planned_revenue_second" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </t>
+                            <t t-if="record.planned_revenue_second.raw_value and record.value.raw_value"> / </t>
+                            <t t-if="record.value.raw_value">
+                                <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </t>
                         </t>
-                        <t t-if="record.planned_revenue_second.raw_value and record.value.raw_value"> / </t>
-                        <t t-if="record.value.raw_value">
-                            <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                        </t>
-                        <t t-if="record.planned_revenue_second.raw_value or record.value.raw_value"> <br/> </t>
-                    </t>
+                    </div>
                 </xpath>
             </field>
         </record>
