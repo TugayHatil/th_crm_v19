@@ -11,13 +11,13 @@
                 <xpath expr="//h2" position="before">
                     <h2 class="o_row align-items-end">
                         <div class="col">
-                            <field name="currency_id" class="oe_inline"/>
+                            <field name="currency_id"/>
                         </div>
                         <div class="col">
-                            <field name="planned_revenue_second" class="oe_inline"/>
+                            <field name="planned_revenue_second"/>
                         </div>
                         <div class="col">
-                            <field name="value" class="oe_inline"/>
+                            <field name="value"/>
                         </div>
                     </h2>
                 </xpath>
