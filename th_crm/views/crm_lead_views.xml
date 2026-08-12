@@ -7,15 +7,28 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-                <!-- Add Second Currency fields as a group before existing h2 -->
+                <!-- Add Second Currency fields in h2 with labels before existing h2 -->
                 <xpath expr="//h2" position="before">
-                    <group>
-                        <group>
-                            <field name="currency_id"/>
-                            <field name="planned_revenue_second"/>
-                            <field name="value"/>
-                        </group>
-                    </group>
+                    <h2 class="row g-0 pb-3 pb-sm-4">
+                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                            <label class="o_form_label oe_edit_only" for="currency_id">Currency</label>
+                            <div class="d-flex flex-wrap align-items-baseline">
+                                <field name="currency_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                            <label class="o_form_label oe_edit_only" for="planned_revenue_second">Revenue Other Currency</label>
+                            <div class="d-flex flex-wrap align-items-baseline">
+                                <field name="planned_revenue_second" class="oe_inline"/>
+                            </div>
+                        </div>
+                        <div class="col-auto pb-2 pb-md-0 w-100 w-sm-auto">
+                            <label class="o_form_label oe_edit_only" for="value">Value</label>
+                            <div class="d-flex flex-wrap align-items-baseline">
+                                <field name="value" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </h2>
                 </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
