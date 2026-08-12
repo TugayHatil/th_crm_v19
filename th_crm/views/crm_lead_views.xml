@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <!-- CRM Lead Form View Inheritance -->
@@ -91,7 +91,7 @@
                 </xpath>
                 <xpath expr="//div[@name='expected_revenue']" position="before">
                     <div class="o_kanban_record_subtitle">
-                        <span class="oe_kanban_record_subtitle">Dövizli Beklenen Gelir: </span>
+                        <span class="oe_kanban_record_subtitle">Dovizli Beklenen Gelir: </span>
                         <field name="planned_revenue_second" widget="monetary"/>
                     </div>
                     <div class="o_kanban_record_subtitle">
