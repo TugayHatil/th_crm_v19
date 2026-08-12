@@ -9,17 +9,15 @@
             <field name="arch" type="xml">
                 <!-- Add Second Currency fields after name -->
                 <xpath expr="//field[@name='name']" position="after">
-                    <div class="row">
-                        <div class="col-4">
+                    <group string="Second Currency">
+                        <group>
                             <field name="currency_id"/>
-                        </div>
-                        <div class="col-4">
                             <field name="planned_revenue_second"/>
-                        </div>
-                        <div class="col-4">
+                        </group>
+                        <group>
                             <field name="value"/>
-                        </div>
-                    </div>
+                        </group>
+                    </group>
                 </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
