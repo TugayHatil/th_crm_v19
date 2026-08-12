@@ -88,6 +88,7 @@
                 <xpath expr="/kanban//field[@name='name']" position="after">
                     <field name="planned_revenue_second"/>
                     <field name="value"/>
+                    <field name="currency_id" invisible="1"/>
                 </xpath>
             </field>
         </record>
