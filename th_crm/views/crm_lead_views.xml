@@ -7,17 +7,19 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-                <!-- Add Second Currency fields in h2 -->
-                <xpath expr="//h2" position="inside">
-                    <div class="col">
-                        <field name="currency_id" class="oe_inline"/>
-                    </div>
-                    <div class="col">
-                        <field name="planned_revenue_second" class="oe_inline"/>
-                    </div>
-                    <div class="col">
-                        <field name="value" class="oe_inline"/>
-                    </div>
+                <!-- Add new h2 block for Second Currency fields before existing h2 -->
+                <xpath expr="//h2" position="before">
+                    <h2 class="o_row align-items-end">
+                        <div class="col">
+                            <field name="currency_id" class="oe_inline"/>
+                        </div>
+                        <div class="col">
+                            <field name="planned_revenue_second" class="oe_inline"/>
+                        </div>
+                        <div class="col">
+                            <field name="value" class="oe_inline"/>
+                        </div>
+                    </h2>
                 </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
