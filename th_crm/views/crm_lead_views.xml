@@ -49,7 +49,7 @@
                         <group>
                             <field name="gcp_billing_account"/>
                             <field name="ps_opp_exist"/>
-                            <field name="year_of_commit"/>
+                            <field name="year_of_commit" options="{'format': 'DD/MM/YYYY'}"/>
                         </group>
                         <group>
                             <field name="vendor_subscription_start_date"/>
