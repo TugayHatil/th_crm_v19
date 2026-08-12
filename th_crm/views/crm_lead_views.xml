@@ -89,6 +89,16 @@
                     <field name="planned_revenue_second"/>
                     <field name="value"/>
                 </xpath>
+                <xpath expr="//t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="after">
+                    <div class="o_kanban_record_subtitle">
+                        <t t-if="record.planned_revenue_second.raw_value">
+                            <div>Dovizli Beklenen Gelir: <field name="planned_revenue_second" widget="monetary"/></div>
+                        </t>
+                        <t t-if="record.value.raw_value">
+                            <div>Value: <field name="value" widget="monetary"/></div>
+                        </t>
+                    </div>
+                </xpath>
             </field>
         </record>
     </data>
