@@ -93,10 +93,10 @@
                 <xpath expr="//t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="after">
                     <div class="o_kanban_record_subtitle">
                         <t t-if="record.planned_revenue_second.raw_value">
-                            <div>Dovizli Beklenen Gelir: <t t-esc="record.planned_revenue_second.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
+                            <div class="o_kanban_record_subtitle">Dovizli Beklenen Gelir: <t t-esc="record.planned_revenue_second.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
                         </t>
                         <t t-if="record.value.raw_value">
-                            <div>Value: <t t-esc="record.value.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
+                            <div class="o_kanban_record_subtitle">Value: <t t-esc="record.value.raw_value"/> <t t-if="record.currency_id.raw_value"><t t-esc="record.currency_id.raw_value.symbol"/></t></div>
                         </t>
                     </div>
                 </xpath>
