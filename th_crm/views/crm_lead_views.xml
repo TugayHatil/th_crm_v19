@@ -7,6 +7,18 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
+                <!-- Add Second Currency fields in h2 -->
+                <xpath expr="//h2" position="inside">
+                    <div class="col">
+                        <field name="currency_id" class="oe_inline"/>
+                    </div>
+                    <div class="col">
+                        <field name="planned_revenue_second" class="oe_inline"/>
+                    </div>
+                    <div class="col">
+                        <field name="value" class="oe_inline"/>
+                    </div>
+                </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
                     <group string="Qualification / Opportunity">
@@ -50,15 +62,6 @@
                             <field name="budget"/>
                             <field name="risk"/>
                             <field name="timing"/>
-                        </group>
-                    </group>
-                    <group string="Second Currency">
-                        <group>
-                            <field name="currency_id"/>
-                            <field name="planned_revenue_second"/>
-                        </group>
-                        <group>
-                            <field name="value"/>
                         </group>
                     </group>
                 </xpath>
