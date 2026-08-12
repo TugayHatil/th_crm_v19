@@ -78,28 +78,5 @@
                 </xpath>
             </field>
         </record>
-        <!-- CRM Lead Kanban View Inheritance -->
-        <record id="view_crm_lead_kanban_inherit" model="ir.ui.view">
-            <field name="name">crm.lead.kanban.inherit</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_lead_view_kanban"/>
-            <field name="arch" type="xml">
-                <!-- Add Second Currency fields to kanban view -->
-                <xpath expr="//field[@name='expected_revenue']" position="before">
-                    <field name="planned_revenue_second"/>
-                    <field name="value"/>
-                </xpath>
-                <xpath expr="//div[@name='expected_revenue']" position="before">
-                    <div class="o_kanban_record_subtitle">
-                        <span class="oe_kanban_record_subtitle">Dovizli Beklenen Gelir: </span>
-                        <field name="planned_revenue_second" widget="monetary"/>
-                    </div>
-                    <div class="o_kanban_record_subtitle">
-                        <span class="oe_kanban_record_subtitle">Value: </span>
-                        <field name="value" widget="monetary"/>
-                    </div>
-                </xpath>
-            </field>
-        </record>
     </data>
 </odoo>
