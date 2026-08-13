@@ -17,7 +17,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-lg-2 pb-2 pb-lg-0">
-                            <label class="o_form_label oe_edit_only" for="planned_revenue_second">Revenue Other Currency</label>
+                            <label class="o_form_label oe_edit_only" for="planned_revenue_second">Other Revenue</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="planned_revenue_second" class="oe_inline o_input_13ch"/>
                             </div>
