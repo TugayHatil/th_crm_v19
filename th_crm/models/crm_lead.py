@@ -54,7 +54,7 @@ class CrmLead(models.Model):
     # Second Currency
     currency_id = fields.Many2one('res.currency', string='Currency')
     planned_revenue_second = fields.Monetary('Revenue Other Currency', currency_field='currency_id', tracking=True)
-    value = fields.Monetary('Value (Revenue * Probability)', currency_field='currency_id', compute='_compute_value', store=True)
+    value = fields.Monetary('Value', currency_field='currency_id', compute='_compute_value', store=True)
 
     @api.depends('planned_revenue_second', 'probability')
     def _compute_value(self):
