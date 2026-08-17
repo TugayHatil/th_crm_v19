@@ -10,7 +10,7 @@
         =============
         This module extends the CRM Lead model with additional qualification fields.
     """,
-    'author': 'TugayHatil',
+    'author': 'Projet Solutions',
     'website': 'https://github.com/TugayHatil/th_crm_v19',
     'license': 'LGPL-3',
     'depends': ['crm'],
