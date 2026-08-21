@@ -52,7 +52,7 @@
                             <field name="year_of_commit" widget="date" options="{'format': 'DD/MM/YYYY'}"/>
                         </group>
                         <group>
-                            <field name="vendor_subscription_start_date"/>
+                            <field name="vendor_subscription_start_date" widget="date" options="{'format': 'DD/MM/YYYY'}"/>
                             <field name="training_opp_exist"/>
                         </group>
                     </group>
