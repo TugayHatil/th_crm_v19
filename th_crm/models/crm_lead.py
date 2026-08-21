@@ -37,7 +37,7 @@ class CrmLead(models.Model):
     gcp_billing_account = fields.Char(string='GCP Billing Account')
     ps_opp_exist = fields.Boolean(string='PS Opp. Exist')
     training_opp_exist = fields.Boolean(string='Training Opp. Exist')
-    vendor_subscription_start_date = fields.Many2one('res.partner', string='Vendor Subscription Start Date')
+    vendor_subscription_start_date = fields.Date(string='Vendor Subscription Start Date')
     year_of_commit = fields.Date(string='Year of Commit')
 
     # Competition
