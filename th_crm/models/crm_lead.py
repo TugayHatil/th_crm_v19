@@ -16,13 +16,7 @@ class CrmLead(models.Model):
         ('gcp', 'GCP'),
         ('aws', 'AWS'),
     ], string='Hyperscaler')
-    informatica_solution_id = fields.Selection([
-        ('data_integration', 'Data Integration'),
-        ('data_quality', 'Data Quality'),
-        ('cloud_services', 'Cloud Services'),
-        ('master_data_management', 'Master Data Management'),
-        ('data_governance', 'Data Governance'),
-    ], string='Informatica Solution')
+    informatica_solution_id = fields.Many2one('informatica.solution', string='Informatica Solution')
     technology = fields.Selection([
         ('analytics', 'Analytics'),
         ('data', 'Data'),
