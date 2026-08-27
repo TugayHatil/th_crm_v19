@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Informatica Solution Tree View -->
+        <record id="view_informatica_solution_tree" model="ir.ui.view">
+            <field name="name">informatica.solution.tree</field>
+            <field name="model">informatica.solution</field>
+            <field name="arch" type="xml">
+                <tree string="Informatica Solutions">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Informatica Solution Form View -->
+        <record id="view_informatica_solution_form" model="ir.ui.view">
+            <field name="name">informatica.solution.form</field>
+            <field name="model">informatica.solution</field>
+            <field name="arch" type="xml">
+                <form string="Informatica Solution">
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Informatica Solution Action -->
+        <record id="action_informatica_solution" model="ir.actions.act_window">
+            <field name="name">Informatica Solutions</field>
+            <field name="res_model">informatica.solution</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Informatica Solution!
+                </p>
+            </field>
+        </record>
+
+        <!-- Informatica Solution Menu Item -->
+        <menuitem id="menu_informatica_solution"
+                  name="Informatica Solutions"
+                  parent="crm.menu_crm_config_lead"
+                  action="action_informatica_solution"
+                  sequence="10"/>
+    </data>
+</odoo>
