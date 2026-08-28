@@ -17,6 +17,7 @@ class CrmLead(models.Model):
         ('aws', 'AWS'),
     ], string='Hyperscaler')
     informatica_solution_id = fields.Many2one('informatica.solution', string='Informatica Solution')
+    informatica_pipeline_id = fields.Many2one('informatica.pipeline', string='Informatica Pipeline')
     technology = fields.Selection([
         ('analytics', 'Analytics'),
         ('data', 'Data'),

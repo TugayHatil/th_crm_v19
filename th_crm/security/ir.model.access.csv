@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_crm_pipeline_user,crm.pipeline.user,model_crm_pipeline,base.group_user,1,1,1,0
 access_informatica_solution_user,informatica.solution.user,model_informatica_solution,base.group_user,1,1,1,0
+access_informatica_pipeline_user,informatica.pipeline.user,model_informatica_pipeline,base.group_user,1,1,1,0

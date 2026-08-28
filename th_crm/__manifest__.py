@@ -19,6 +19,7 @@
         'views/crm_pipeline_views.xml',
         'views/crm_stage_views.xml',
         'views/informatica_solution_views.xml',
+        'views/informatica_pipeline_views.xml',
         'security/crm_pipeline_security.xml',
         'security/ir.model.access.csv',
     ],

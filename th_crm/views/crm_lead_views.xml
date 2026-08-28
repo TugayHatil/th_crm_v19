@@ -42,6 +42,7 @@
                         <group>
                             <field name="second_contact_person_id"/>
                             <field name="informatica_solution_id"/>
+                            <field name="informatica_pipeline_id"/>
                             <field name="selection_criterias"/>
                         </group>
                     </group>
