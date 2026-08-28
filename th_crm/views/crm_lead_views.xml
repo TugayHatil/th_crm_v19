@@ -22,10 +22,16 @@
                                 <field name="planned_revenue_second" class="oe_inline o_input_13ch"/>
                             </div>
                         </div>
-                        <div class="col-12 col-md-7 pb-2 pb-md-0">
+                        <div class="col-12 col-md-3 pb-2 pb-md-0">
                             <label class="o_form_label oe_edit_only text-nowrap" for="value">Value</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="value" class="oe_inline o_input_13ch fw-normal"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 pb-2 pb-md-0">
+                            <label class="o_form_label oe_edit_only text-nowrap" for="pipeline_id">Pipeline</label>
+                            <div class="d-flex flex-wrap align-items-baseline">
+                                <field name="pipeline_id" class="oe_inline"/>
                             </div>
                         </div>
                     </h2>
@@ -42,7 +48,6 @@
                         <group>
                             <field name="second_contact_person_id"/>
                             <field name="informatica_solution_id"/>
-                            <field name="pipeline_id"/>
                             <field name="selection_criterias"/>
                         </group>
                     </group>
