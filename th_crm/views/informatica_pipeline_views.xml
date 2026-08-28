@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <!-- Informatica Pipeline List View -->
@@ -49,8 +49,8 @@
         <!-- Informatica Pipeline Menu Item -->
         <menuitem id="menu_informatica_pipeline"
                   name="Informatica Pipelines"
-                  parent="menu_informatica_solution"
+                  parent="crm.menu_crm_config_lead"
                   action="action_informatica_pipeline"
-                  sequence="10"/>
+                  sequence="11"/>
     </data>
 </odoo>
