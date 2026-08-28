@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class InformaticaPipeline(models.Model):
@@ -11,34 +11,3 @@ class InformaticaPipeline(models.Model):
     code = fields.Char(string='Code', required=True)
     description = fields.Text(string='Description')
     active = fields.Boolean(string='Active', default=True)
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        pipelines = super().create(vals_list)
-        crm_lead_model = self.env.ref('crm.model_crm_lead')
-        for pipeline in pipelines:
-            try:
-                crm_lead_action = self.env.ref('crm.action_crm_lead', raise_if_not_found=False)
-                filter_vals = {
-                    'name': pipeline.name,
-                    'model_id': crm_lead_model.id,
-                    'domain': f"[('pipeline_id', '=', {pipeline.id})]",
-                    'context': "{}",
-                    'is_default': True,
-                }
-                if crm_lead_action:
-                    filter_vals['action_id'] = crm_lead_action.id
-                self.env['ir.filters'].create(filter_vals)
-            except Exception as e:
-                pass
-        return pipelines
-
-    def unlink(self):
-        crm_lead_model = self.env.ref('crm.model_crm_lead')
-        for pipeline in self:
-            filters = self.env['ir.filters'].search([
-                ('model_id', '=', crm_lead_model.id),
-                ('domain', 'like', f"'pipeline_id', '=', {pipeline.id}")
-            ])
-            filters.unlink()
-        return super().unlink()
