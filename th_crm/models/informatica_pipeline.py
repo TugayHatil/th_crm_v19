@@ -21,7 +21,9 @@ class InformaticaPipeline(models.Model):
                 'name': pipeline.name,
                 'model_id': crm_lead_model.id,
                 'domain': f"[('pipeline_id', '=', {pipeline.id})]",
+                'context': "{}",
                 'is_default': True,
+                'user_id': self.env.user.id,
             })
         return pipelines
 
