@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'TH CRM',
+    'name': 'CRM Komtas UX',
     'version': '19.0.1.0.3',
     'category': 'CRM',
     'summary': 'Extend CRM lead qualification fields',
     'description': """
-        TH CRM Module
-        =============
+        CRM Komtas UX Module
+        ====================
         This module extends the CRM Lead model with additional qualification fields.
     """,
     'author': 'Projet Solutions',
-    'website': 'https://github.com/TugayHatil/th_crm_v19',
+    'website': 'https://github.com/TugayHatil/crm_komtas_ux',
     'license': 'LGPL-3',
     'depends': ['crm'],
     'data': [
