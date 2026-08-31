@@ -8,9 +8,8 @@ class CrmLead(models.Model):
 
     dr_no = fields.Char(string='DR No')
 
-    # Qualification / Opportunity
-    sequence_enrollment = fields.Boolean(string='Sequence enrollment')
-    second_contact_person_id = fields.Many2one('res.partner', string='2nd Contact Person')
+    sequence_enrollment = fields.Boolean(string='Sequence Enrollment')
+    second_contact_person_id = fields.Many2one('res.partner', string='Second Contact Person')
     hyperscaler = fields.Selection([
         ('ms_azure', 'MS Azure'),
         ('gcp', 'GCP'),
@@ -28,28 +27,45 @@ class CrmLead(models.Model):
         ('delivery_capabilities', 'Delivery Capabilities'),
     ], string='Selection Criterias')
 
-    # Commercial / Business
     gcp_billing_account = fields.Char(string='GCP Billing Account')
-    ps_opp_exist = fields.Boolean(string='PS Opp. Exist')
-    training_opp_exist = fields.Boolean(string='Training Opp. Exist')
+    ps_opp_exist = fields.Boolean(string='PS Opportunity Exists')
+    training_opp_exist = fields.Boolean(string='Training Opportunity Exists')
     vendor_subscription_start_date = fields.Date(string='Vendor Subscription Start Date')
     year_of_commit = fields.Date(string='Year of Commit')
 
-    # Competition
-    service_competitor_ids = fields.Many2many('res.partner', 'crm_lead_service_competitor_rel', 'lead_id', 'partner_id', string='Service-Competitors')
-    tech_competitor_ids = fields.Many2many('res.partner', 'crm_lead_tech_competitor_rel', 'lead_id', 'partner_id', string='Tech-Competitors')
+    service_competitor_ids = fields.Many2many(
+        'res.partner',
+        'crm_lead_service_competitor_rel',
+        'lead_id',
+        'partner_id',
+        string='Service Competitors'
+    )
+    tech_competitor_ids = fields.Many2many(
+        'res.partner',
+        'crm_lead_tech_competitor_rel',
+        'lead_id',
+        'partner_id',
+        string='Technology Competitors'
+    )
 
-    # Qualification Details
-    authority = fields.Char(string='Authority', help='Who is Executive Sponsor? Who Own Funds? Who Sign Contract?')
-    budget = fields.Char(string='Budget', help='Who owns the Budget? Is it funded for Outside Purchase?')
-    lead_source_details = fields.Html(string='Details for Lead Source')
-    risk = fields.Html(string='Risk', help='General Risks? Product Risks:')
-    timing = fields.Html(string='Timing', help='Timeframe? Why Buy Now?')
+    authority = fields.Char(string='Authority')
+    budget = fields.Char(string='Budget')
+    lead_source_details = fields.Html(string='Lead Source Details')
+    risk = fields.Html(string='Risk')
+    timing = fields.Html(string='Timing')
 
-    # Second Currency
     currency_id = fields.Many2one('res.currency', string='Currency')
-    planned_revenue_second = fields.Monetary('Revenue Other Currency', currency_field='currency_id', tracking=True)
-    value = fields.Monetary('Value', currency_field='currency_id', compute='_compute_value', store=True)
+    planned_revenue_second = fields.Monetary(
+        'Revenue Other Currency',
+        currency_field='currency_id',
+        tracking=True
+    )
+    value = fields.Monetary(
+        'Value',
+        currency_field='currency_id',
+        compute='_compute_value',
+        store=True
+    )
 
     @api.depends('planned_revenue_second', 'probability')
     def _compute_value(self):

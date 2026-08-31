@@ -4,12 +4,7 @@
     'name': 'CRM Komtas UX',
     'version': '19.0.1.0.4',
     'category': 'CRM',
-    'summary': 'Extend CRM lead qualification fields',
-    'description': """
-        CRM Komtas UX Module
-        ====================
-        This module extends the CRM Lead model with additional qualification fields.
-    """,
+    'summary': 'CRM Lead Qualification Enhancement',
     'author': 'Projet Solutions',
     'website': 'https://github.com/TugayHatil/crm_komtas_ux',
     'license': 'LGPL-3',
