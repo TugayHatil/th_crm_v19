@@ -1,0 +1,282 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* crm_komtas_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-31 14:38+0000\n"
+"PO-Revision-Date: 2026-08-31 14:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__dr_no
+msgid "DR No"
+msgstr "DR No"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__sequence_enrollment
+msgid "Sequence enrollment"
+msgstr "Sıralı Kayıt"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__second_contact_person_id
+msgid "2nd Contact Person"
+msgstr "2. İletişim Kişisi"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__hyperscaler
+msgid "Hyperscaler"
+msgstr "Hyperscaler"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__hyperscaler__ms_azure
+msgid "MS Azure"
+msgstr "MS Azure"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__hyperscaler__gcp
+msgid "GCP"
+msgstr "GCP"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__hyperscaler__aws
+msgid "AWS"
+msgstr "AWS"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__informatica_solution_id
+msgid "Informatica Solution"
+msgstr "Informatica Çözümü"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__pipeline_id
+msgid "Pipeline"
+msgstr "Pipeline"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__technology
+msgid "Technology"
+msgstr "Teknoloji"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__technology__analytics
+msgid "Analytics"
+msgstr "Analitik"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__technology__data
+msgid "Data"
+msgstr "Veri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__selection_criterias
+msgid "Selection Criterias"
+msgstr "Seçim Kriterleri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__selection_criterias__technical_win
+msgid "Technical Win"
+msgstr "Teknik Başarı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__selection_criterias__cost_advantage
+msgid "Cost Advantage"
+msgstr "Maliyet Avantajı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields.selection,name:crm_komtas_ux.selection_crm_lead__selection_criterias__delivery_capabilities
+msgid "Delivery Capabilities"
+msgstr "Teslimat Yetenekleri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__gcp_billing_account
+msgid "GCP Billing Account"
+msgstr "GCP Fatura Hesabı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__ps_opp_exist
+msgid "PS Opp. Exist"
+msgstr "PS Fırsatı Mevcut"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__year_of_commit
+msgid "Year of Commit"
+msgstr "Taahhüt Yılı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__vendor_subscription_start_date
+msgid "Vendor Subscription Start Date"
+msgstr "Satıcı Abonelik Başlangıç Tarihi"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__training_opp_exist
+msgid "Training Opp. Exist"
+msgstr "Eğitim Fırsatı Mevcut"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__service_competitor_ids
+msgid "Service-Competitors"
+msgstr "Hizmet Rakipleri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__tech_competitor_ids
+msgid "Tech-Competitors"
+msgstr "Teknoloji Rakipleri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__authority
+msgid "Authority"
+msgstr "Yetki"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,help:crm_komtas_ux.field_crm_lead__authority
+msgid "Who is Executive Sponsor? Who Own Funds? Who Sign Contract?"
+msgstr "Yönetici Sponsor Kim? Kaynak Sahibi Kim? Sözleşmeyi Kim İmzalar?"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__budget
+msgid "Budget"
+msgstr "Bütçe"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,help:crm_komtas_ux.field_crm_lead__budget
+msgid "Who owns the Budget? Is it funded for Outside Purchase?"
+msgstr "Bütçe Sahibi Kim? Dış Satın Alma için finanse edildi mi?"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__lead_source_details
+msgid "Details for Lead Source"
+msgstr "Fırsat Kaynağı Detayları"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__risk
+msgid "Risk"
+msgstr "Risk"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,help:crm_komtas_ux.field_crm_lead__risk
+msgid "General Risks? Product Risks:"
+msgstr "Genel Riskler? Ürün Riskleri:"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__timing
+msgid "Timing"
+msgstr "Zamanlama"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,help:crm_komtas_ux.field_crm_lead__timing
+msgid "Timeframe? Why Buy Now?"
+msgstr "Zaman Çerçevesi? Neden Şimdi Alınmalı?"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__currency_id
+msgid "Currency"
+msgstr "Para Birimi"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__planned_revenue_second
+msgid "Revenue Other Currency"
+msgstr "Diğer Para Birimi Geliri"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_lead__value
+msgid "Value"
+msgstr "Değer"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_pipeline__name
+msgid "Pipeline Name"
+msgstr "Pipeline Adı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_pipeline__active
+msgid "Active"
+msgstr "Aktif"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_crm_stage__name
+msgid "Stage Name"
+msgstr "Aşama Adı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_informatica_solution__name
+msgid "Solution Name"
+msgstr "Çözüm Adı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_informatica_solution__code
+msgid "Code"
+msgstr "Kod"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_informatica_solution__description
+msgid "Description"
+msgstr "Açıklama"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_informatica_pipeline__name
+msgid "Pipeline Name"
+msgstr "Pipeline Adı"
+
+#. module: crm_komtas_ux
+#: model:ir.model.fields,field_description:crm_komtas_ux.field_informatica_pipeline__active
+msgid "Active"
+msgstr "Aktif"
+
+#. module: crm_komtas_ux
+#: model:ir.ui.menu,name:crm_komtas_ux.menu_informatica_pipeline
+msgid "Pipelines"
+msgstr "Pipelines"
+
+#. module: crm_komtas_ux
+#: model:ir.actions.act_window,name:crm_komtas_ux.action_informatica_pipeline
+msgid "Informatica Pipelines"
+msgstr "Informatica Pipelines"
+
+#. module: crm_komtas_ux
+#: model:ir.ui.view,name:crm_komtas_ux.view_informatica_pipeline_tree
+msgid "Informatica Pipelines"
+msgstr "Informatica Pipelines"
+
+#. module: crm_komtas_ux
+#: model:ir.ui.view,name:crm_komtas_ux.view_informatica_pipeline_form
+msgid "Informatica Pipeline"
+msgstr "Informatica Pipeline"
+
+#. module: crm_komtas_ux
+#: model:ir.model,name:crm_komtas_ux.model_informatica_pipeline
+msgid "Informatica Pipeline"
+msgstr "Informatica Pipeline"
+
+#. module: crm_komtas_ux
+#: model:ir.model,name:crm_komtas_ux.model_informatica_solution
+msgid "Informatica Solution"
+msgstr "Informatica Çözümü"
+
+#. module: crm_komtas_ux
+#: model:ir.model,name:crm_komtas_ux.model_crm_pipeline
+msgid "CRM Pipeline"
+msgstr "CRM Pipeline"
+
+#. module: crm_komtas_ux
+#: model:ir.model,name:crm_komtas_ux.model_crm_stage
+msgid "CRM Stage"
+msgstr "CRM Aşaması"
+
+#. module: crm_komtas_ux
+#: model:ir.model,name:crm_komtas_ux.model_crm_lead
+msgid "CRM Lead"
+msgstr "CRM Fırsatı"
+
+#. module: crm_komtas_ux
+#: model:ir.ui.view,name:crm_komtas_ux.view_crm_lead_form_inherit
+msgid "CRM Lead Form Inherit"
+msgstr "CRM Fırsatı Formu Mirası"
