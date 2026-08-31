@@ -2,7 +2,7 @@
 
 {
     'name': 'CRM Komtas UX',
-    'version': '19.0.1.0.3',
+    'version': '19.0.1.0.4',
     'category': 'CRM',
     'summary': 'Extend CRM lead qualification fields',
     'description': """
