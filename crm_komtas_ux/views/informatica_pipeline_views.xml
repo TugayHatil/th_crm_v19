@@ -48,7 +48,7 @@
 
         <!-- Informatica Pipeline Menu Item -->
         <menuitem id="menu_informatica_pipeline"
-                  name="Informatica Pipelines"
+                  name="Pipelines"
                   parent="crm.menu_crm_config_lead"
                   action="action_informatica_pipeline"
                   sequence="11"/>
