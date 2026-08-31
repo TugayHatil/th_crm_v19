@@ -40,11 +40,11 @@ class CrmLead(models.Model):
     tech_competitor_ids = fields.Many2many('res.partner', 'crm_lead_tech_competitor_rel', 'lead_id', 'partner_id', string='Tech-Competitors')
 
     # Qualification Details
-    authority = fields.Char(string='AUTHORITY:Who is Executive Sponsor? Who Own Funds?Who Sign Contract?')
-    budget = fields.Char(string='BUDGET:Who owns the Budget? Is it funded for Outside Purchase?')
+    authority = fields.Text(string='Authority', help='Who is Executive Sponsor? Who Own Funds? Who Sign Contract?')
+    budget = fields.Char(string='Budget', help='Who owns the Budget? Is it funded for Outside Purchase?')
     lead_source_details = fields.Html(string='Details for Lead Source')
-    risk = fields.Html(string='RISK:General Risks? Product Risks:')
-    timing = fields.Html(string='TIMING:Timeframe? Why Buy Now?')
+    risk = fields.Html(string='Risk', help='General Risks? Product Risks:')
+    timing = fields.Html(string='Timing', help='Timeframe? Why Buy Now?')
 
     # Second Currency
     currency_id = fields.Many2one('res.currency', string='Currency')
