@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
 
@@ -65,17 +65,19 @@ class CrmLead(models.Model):
         return self.env['crm.stage'].search(search_domain, order=order, limit=limit)
 
     @api.model
-    def _read_group_stage_ids(self, stages, domain):
-        pipeline_id = self.env.context.get('default_pipeline_id')
-        if not pipeline_id:
+    def _read_group_stage_ids(self, stages, domain, order=None):
+        pipeline_ids = []
+        if self.env.context.get('default_pipeline_id'):
+            pipeline_ids = [self.env.context.get('default_pipeline_id')]
+        else:
             pipeline_ids = self.search(domain).mapped('pipeline_id').ids
-            if pipeline_ids and len(pipeline_ids) == 1:
-                pipeline_id = pipeline_ids[0]
-        if pipeline_id:
-            search_domain = ['|', ('id', 'in', stages.ids), '|', ('pipeline_id', '=', False), ('pipeline_id', '=', pipeline_id)]
+
+        if pipeline_ids:
+            search_domain = ['|', ('id', 'in', stages.ids), '|', ('pipeline_id', '=', False), ('pipeline_id', 'in', pipeline_ids)]
         else:
             search_domain = ['|', ('id', 'in', stages.ids), ('pipeline_id', '=', False)]
-        stage_ids = stages.sudo()._search(search_domain, order=stages._order)
+            
+        stage_ids = stages.sudo()._search(search_domain, order=order if order else stages._order)
         return stages.browse(stage_ids)
 
     service_competitor_ids = fields.Many2many(
