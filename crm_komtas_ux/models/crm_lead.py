@@ -44,7 +44,7 @@ class CrmLead(models.Model):
         copy=False,
         group_expand='_read_group_stage_ids',
         ondelete='restrict',
-        domain="['|', ('pipeline_id', '=', False), ('pipeline_id', '=', pipeline_id)]"
+        domain="['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]"
     )
 
     @api.depends('pipeline_id')
@@ -52,14 +52,14 @@ class CrmLead(models.Model):
         for lead in self:
             if not lead.stage_id:
                 lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
-            elif lead.pipeline_id and lead.stage_id.pipeline_id != lead.pipeline_id:
+            elif lead.pipeline_id and lead.pipeline_id not in lead.stage_id.pipeline_ids:
                 lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
 
     def _stage_find(self, pipeline_id=False, domain=None, order='sequence, id', limit=1):
         if pipeline_id:
-            search_domain = ['|', ('pipeline_id', '=', False), ('pipeline_id', '=', pipeline_id)]
+            search_domain = ['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]
         else:
-            search_domain = [('pipeline_id', '=', False)]
+            search_domain = [('pipeline_ids', '=', False)]
         if domain:
             search_domain += list(domain)
         return self.env['crm.stage'].search(search_domain, order=order, limit=limit)
@@ -73,9 +73,9 @@ class CrmLead(models.Model):
             pipeline_ids = self.search(domain).mapped('pipeline_id').ids
 
         if pipeline_ids:
-            search_domain = ['|', ('id', 'in', stages.ids), '|', ('pipeline_id', '=', False), ('pipeline_id', 'in', pipeline_ids)]
+            search_domain = ['|', ('id', 'in', stages.ids), '|', ('pipeline_ids', '=', False), ('pipeline_ids', 'in', pipeline_ids)]
         else:
-            search_domain = ['|', ('id', 'in', stages.ids), ('pipeline_id', '=', False)]
+            search_domain = ['|', ('id', 'in', stages.ids), ('pipeline_ids', '=', False)]
             
         stage_ids = stages.sudo()._search(search_domain, order=order if order else stages._order)
         return stages.browse(stage_ids)

@@ -7,13 +7,9 @@ class CrmStage(models.Model):
     _inherit = 'crm.stage'
 
     pipeline_ids = fields.Many2many(
-        'crm.pipeline',
-        'crm_stage_pipeline_rel',
+        'informatica.pipeline',
+        'crm_stage_informatica_pipeline_rel',
         'stage_id',
         'pipeline_id',
         string='Pipelines'
-    )
-    pipeline_id = fields.Many2one(
-        'informatica.pipeline',
-        string='Pipeline'
     )
