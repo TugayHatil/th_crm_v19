@@ -38,6 +38,19 @@ class CrmLead(models.Model):
         string='Stage'
     )
 
+    @api.model
+    def _read_group_stage_ids(self, stages, domain):
+        pipeline_id = self.env.context.get('default_pipeline_id')
+        if not pipeline_id:
+            pipeline_ids = self.search(domain).mapped('pipeline_id').ids
+            if pipeline_ids and len(pipeline_ids) == 1:
+                pipeline_id = pipeline_ids[0]
+        search_domain = ['|', ('id', 'in', stages.ids), ('pipeline_id', '=', False)]
+        if pipeline_id:
+            search_domain = ['|', ('id', 'in', stages.ids), '|', ('pipeline_id', '=', False), ('pipeline_id', '=', pipeline_id)]
+        stage_ids = stages.sudo()._search(search_domain, order=stages._order)
+        return stages.browse(stage_ids)
+
     service_competitor_ids = fields.Many2many(
         'res.partner',
         'crm_lead_service_competitor_rel',
