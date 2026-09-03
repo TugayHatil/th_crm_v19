@@ -66,6 +66,17 @@ class CrmLead(models.Model):
         compute='_compute_value',
         store=True
     )
+    stage_id = fields.Many2one(
+        'crm.stage',
+        string='Stage',
+        domain=lambda self: self._get_stage_domain()
+    )
+
+    def _get_stage_domain(self):
+        if self.pipeline_id:
+            return [('pipeline_id', '=', self.pipeline_id.id)]
+        else:
+            return ['|', ('pipeline_id', '=', False), ('pipeline_id', '=', None)]
 
     @api.depends('planned_revenue_second', 'probability')
     def _compute_value(self):

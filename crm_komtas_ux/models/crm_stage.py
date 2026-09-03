@@ -13,3 +13,7 @@ class CrmStage(models.Model):
         'pipeline_id',
         string='Pipelines'
     )
+    pipeline_id = fields.Many2one(
+        'informatica.pipeline',
+        string='Pipeline'
+    )

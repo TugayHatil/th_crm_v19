@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet" position="inside">
                     <group>
+                        <field name="pipeline_id"/>
                         <field name="pipeline_ids" widget="many2many_tags"/>
                     </group>
                 </xpath>
