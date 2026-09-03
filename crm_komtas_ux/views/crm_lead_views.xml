@@ -94,10 +94,6 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
             <field name="arch" type="xml">
-                <!-- Override stage_id field with pipeline-based domain in kanban view -->
-                <xpath expr="//field[@name='stage_id']" position="replace">
-                    <field name="stage_id" domain="[('pipeline_id', '=', pipeline_id)]"/>
-                </xpath>
                 <!-- Add Second Currency fields to kanban view -->
                 <xpath expr="/kanban//field[@name='name']" position="after">
                     <field name="currency_id" invisible="1"/>

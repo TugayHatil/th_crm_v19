@@ -85,3 +85,18 @@ class CrmLead(models.Model):
                 self.company_id or self.env.company,
                 self.create_date or fields.Date.today()
             )
+
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        if groupby and 'stage_id' in groupby:
+            pipeline_id = self.env.context.get('default_pipeline_id')
+            if not pipeline_id:
+                pipeline_ids = self.search(domain).mapped('pipeline_id').ids
+                if pipeline_ids and len(pipeline_ids) == 1:
+                    pipeline_id = pipeline_ids[0]
+            if pipeline_id:
+                stage_domain = [('pipeline_id', '=', pipeline_id)]
+                stages = self.env['crm.stage'].search(stage_domain)
+                if stages:
+                    stage_ids = stages.ids
+                    domain = domain + [('stage_id', 'in', stage_ids)]
+        return super(CrmLead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
