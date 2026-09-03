@@ -33,6 +33,23 @@ class CrmLead(models.Model):
     vendor_subscription_start_date = fields.Date(string='Vendor Subscription Start Date')
     year_of_commit = fields.Date(string='Year of Commit')
 
+    stage_id = fields.Many2one(
+        'crm.stage',
+        string='Stage',
+        domain="[('pipeline_id', '=', pipeline_id)]",
+        group_expand='_group_expand_stage_ids'
+    )
+
+    def _group_expand_stage_ids(self, stages, domain, order):
+        pipeline_id = self.env.context.get('default_pipeline_id')
+        if not pipeline_id:
+            pipeline_ids = self.search(domain).mapped('pipeline_id').ids
+            if pipeline_ids and len(pipeline_ids) == 1:
+                pipeline_id = pipeline_ids[0]
+        if pipeline_id:
+            stages = stages.filtered(lambda s: s.pipeline_id.id == pipeline_id)
+        return stages
+
     service_competitor_ids = fields.Many2many(
         'res.partner',
         'crm_lead_service_competitor_rel',
@@ -85,13 +102,3 @@ class CrmLead(models.Model):
                 self.company_id or self.env.company,
                 self.create_date or fields.Date.today()
             )
-
-    def _read_group_stage_ids(self, stages, domain, order):
-        pipeline_id = self.env.context.get('default_pipeline_id')
-        if not pipeline_id:
-            pipeline_ids = self.search(domain).mapped('pipeline_id').ids
-            if pipeline_ids and len(pipeline_ids) == 1:
-                pipeline_id = pipeline_ids[0]
-        if pipeline_id:
-            stages = stages.filtered(lambda s: s.pipeline_id.id == pipeline_id)
-        return super(CrmLead, self)._read_group_stage_ids(stages, domain, order)
