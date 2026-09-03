@@ -38,7 +38,7 @@
                 </xpath>
                 <!-- Override stage_id field with pipeline-based domain -->
                 <xpath expr="//field[@name='stage_id']" position="replace">
-                    <field name="stage_id" domain="[('pipeline_id', '=', pipeline_id)]"/>
+                    <field name="stage_id" widget="statusbar" domain="[('pipeline_id', '=', pipeline_id)]"/>
                 </xpath>
                 <!-- Add fields -->
                 <xpath expr="//form/sheet/group" position="after">
