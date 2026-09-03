@@ -36,11 +36,10 @@ class CrmLead(models.Model):
     stage_id = fields.Many2one(
         'crm.stage',
         string='Stage',
-        domain="[('pipeline_id', '=', pipeline_id)]",
-        group_expand='_group_expand_stage_ids'
+        domain="[('pipeline_id', '=', pipeline_id)]"
     )
 
-    def _group_expand_stage_ids(self, stages, domain, order):
+    def _read_group_stage_ids(self, stages, domain, order):
         pipeline_id = self.env.context.get('default_pipeline_id')
         if not pipeline_id:
             pipeline_ids = self.search(domain).mapped('pipeline_id').ids
