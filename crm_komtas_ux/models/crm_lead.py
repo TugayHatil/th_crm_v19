@@ -68,15 +68,15 @@ class CrmLead(models.Model):
     )
     stage_id = fields.Many2one(
         'crm.stage',
-        string='Stage',
-        domain=lambda self: self._get_stage_domain()
+        string='Stage'
     )
 
-    def _get_stage_domain(self):
+    @api.onchange('pipeline_id')
+    def _onchange_pipeline_id(self):
         if self.pipeline_id:
-            return [('pipeline_id', '=', self.pipeline_id.id)]
+            return {'domain': {'stage_id': [('pipeline_id', '=', self.pipeline_id.id)]}}
         else:
-            return ['|', ('pipeline_id', '=', False), ('pipeline_id', '=', None)]
+            return {'domain': {'stage_id': ['|', ('pipeline_id', '=', False), ('pipeline_id', '=', None)]}}
 
     @api.depends('planned_revenue_second', 'probability')
     def _compute_value(self):
