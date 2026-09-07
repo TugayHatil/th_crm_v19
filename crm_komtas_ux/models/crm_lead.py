@@ -143,11 +143,32 @@ class CrmLead(models.Model):
             self.create_date or fields.Date.context_today(self),
         )
 
+    def write(self, vals):
+        if 'stage_id' in vals:
+            stage = self.env['crm.stage'].browse(vals['stage_id']).exists()
+            if stage:
+                required_fields = stage.sudo().required_fields
+                if required_fields:
+                    for lead in self:
+                        missing_labels = []
+                        for field in required_fields:
+                            fname = field.name
+                            value = getattr(lead, fname, False)
+                            if hasattr(value, '_name'):
+                                value = value.id if value else False
+                            if not value and value != 0:
+                                missing_labels.append(field.field_description)
+                        if missing_labels:
+                            raise ValidationError(
+                                "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
+                                % (stage.name, ', '.join(missing_labels))
+                            )
+        return super(CrmLead, self).write(vals)
+
     @api.constrains('stage_id')
     def _check_required_fields_for_stage(self):
         """Aşama değişiminde, yeni aşamada zorunlu tanımlı alanlar boşsa hata fırlat."""
         for lead in self:
-            # sudo() ile ir.model.fields erişim kısıtını aşıyoruz
             required = lead.stage_id.sudo().required_fields
             if not required:
                 continue
@@ -155,7 +176,6 @@ class CrmLead(models.Model):
             for field in required:
                 fname = field.name
                 value = getattr(lead, fname, False)
-                # Many2one için recordset kontrolü
                 if hasattr(value, '_name'):
                     value = value.id if value else False
                 if not value and value != 0:
