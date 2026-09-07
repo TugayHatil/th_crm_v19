@@ -147,45 +147,50 @@ class CrmLead(models.Model):
             self.create_date or fields.Date.context_today(self),
         )
 
-    def _validate_required_fields_for_stage(self, stage_id, lead_ids=None):
-        """Stage bazlı zorunlu alan kontrolü."""
-        if not stage_id:
-            return
-        stage = self.env['crm.stage'].browse(stage_id).exists()
+    @api.model
+    def check_required_fields_for_stage(self, lead_id, target_stage_id):
+        """Check if required fields are missing for target stage.
+        Returns dict with missing field info.
+        """
+        lead = self.browse(lead_id).exists()
+        if not lead:
+            return {'missing': []}
+        stage = self.env['crm.stage'].browse(target_stage_id).exists()
         if not stage:
-            return
+            return {'missing': []}
         required_fields = stage.sudo().required_fields
-        _logger.warning('[crm_komtas_ux] stage=%s, required_fields=%s', stage.name, [f.name for f in required_fields] if required_fields else [])
         if not required_fields:
-            return
-        leads = self.browse(lead_ids) if lead_ids else self
-        for lead in leads:
-            missing_labels = []
-            for field in required_fields:
-                fname = field.name
-                value = getattr(lead, fname, False)
-                if hasattr(value, '_name'):
-                    value = value.id if value else False
-                _logger.warning('[crm_komtas_ux] lead=%s field=%s value=%s', lead.id, fname, value)
-                if not value and value != 0:
-                    missing_labels.append(field.field_description)
-            if missing_labels:
-                _logger.warning('[crm_komtas_ux] MISSING: %s', missing_labels)
-                raise ValidationError(
-                    "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
-                    % (stage.name, ', '.join(missing_labels))
-                )
+            return {'missing': []}
+        missing = []
+        for field in required_fields:
+            fname = field.name
+            value = getattr(lead, fname, False)
+            if hasattr(value, '_name'):
+                value = value.id if value else False
+            if not value and value != 0:
+                missing.append({
+                    'name': fname,
+                    'label': field.field_description,
+                    'ttype': field.ttype,
+                    'relation': field.relation,
+                })
+        return {'missing': missing}
+
+    @api.model
+    def apply_required_fields_and_stage(self, lead_id, target_stage_id, field_values):
+        """Write field values and move lead to target stage."""
+        lead = self.browse(lead_id).exists()
+        if not lead:
+            return False
+        if field_values:
+            lead.write(field_values)
+        lead.write({'stage_id': target_stage_id})
+        return True
 
     def web_save(self, vals, specification, next_id=None):
-        _logger.warning('[crm_komtas_ux] web_save called, vals keys: %s', list(vals.keys()))
-        if 'stage_id' in vals:
-            self._validate_required_fields_for_stage(vals['stage_id'])
         return super(CrmLead, self).web_save(vals, specification, next_id=next_id)
 
     def write(self, vals):
-        _logger.warning('[crm_komtas_ux] write called, vals keys: %s', list(vals.keys()))
-        if 'stage_id' in vals:
-            self._validate_required_fields_for_stage(vals['stage_id'])
         return super(CrmLead, self).write(vals)
 
     @api.constrains('stage_id')

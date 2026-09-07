@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_stage_required_wizard_form" model="ir.ui.view">
+            <field name="name">stage.required.wizard.form</field>
+            <field name="model">stage.required.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Zorunlu Alanları Doldurun">
+                    <div class="alert alert-warning" role="alert">
+                        Bu fırsatı <strong><field name="target_stage_id" readonly="1"/></strong> aşamasına taşımak için aşağıdaki zorunlu alanları doldurmanız gerekir.
+                    </div>
+                    <group>
+                        <field name="lead_id" invisible="1"/>
+                        <field name="target_stage_id" invisible="1"/>
+                        <field name="field_info" invisible="1"/>
+                        <field name="field_values" invisible="1"/>
+                    </group>
+                    <group string="Zorunlu Alanlar" id="required_fields_group">
+                        <!-- Dynamic fields injected by JS -->
+                    </group>
+                    <footer>
+                        <button name="action_apply" string="Kaydet ve Aşamayı Değiştir" type="object" class="btn-primary"/>
+                        <button string="Vazgeç" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

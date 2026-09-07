@@ -7,3 +7,4 @@ access_hyperscalers_user,hyperscalers.user,model_hyperscalers,base.group_user,1,
 access_hyperscalers_manager,hyperscalers.manager,model_hyperscalers,sales_team.group_sale_manager,1,1,1,1
 access_criterias_user,criterias.user,model_criterias,base.group_user,1,0,0,0
 access_criterias_manager,criterias.manager,model_criterias,sales_team.group_sale_manager,1,1,1,1
+access_stage_required_wizard,stage.required.wizard,model_stage_required_wizard,base.group_user,1,1,1,1
