@@ -7,11 +7,11 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-                <!-- Add Second Currency fields in h2 with labels before existing h2 -->
-                <xpath expr="//h2" position="before">
+                <!-- Add deal-currency fields before the expected revenue block -->
+                <xpath expr="//div[hasclass('oe_title')]/h2" position="before">
                     <h2 class="row g-0 pb-3 pb-sm-4">
                         <div class="col-12 col-md-2 pb-2 pb-md-0">
-                            <label class="o_form_label oe_edit_only text-nowrap" for="currency_id">Currency</label>
+                            <label class="o_form_label oe_edit_only text-nowrap" for="currency_id">Deal Currency</label>
                             <div class="d-flex flex-wrap align-items-baseline">
                                 <field name="currency_id" class="oe_inline"/>
                             </div>
@@ -23,15 +23,15 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-3 pb-2 pb-md-0">
-                            <label class="o_form_label oe_edit_only text-nowrap" for="value">Value</label>
+                            <label class="o_form_label oe_edit_only text-nowrap" for="prorated_revenue_second">Prorated Revenue</label>
                             <div class="d-flex flex-wrap align-items-baseline">
-                                <field name="value" class="oe_inline o_input_13ch fw-normal"/>
+                                <field name="prorated_revenue_second" class="oe_inline o_input_13ch fw-normal"/>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 pb-2 pb-md-0">
                             <label class="o_form_label oe_edit_only text-nowrap" for="pipeline_id">Pipeline</label>
                             <div class="d-flex flex-wrap align-items-baseline">
-                                <field name="pipeline_id" class="oe_inline"/>
+                                <field name="pipeline_id" class="oe_inline" options="{'no_create': True}"/>
                             </div>
                         </div>
                     </h2>
@@ -40,8 +40,8 @@
                 <xpath expr="//field[@name='stage_id']" position="replace">
                     <field name="stage_id" widget="statusbar" domain="['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]"/>
                 </xpath>
-                <!-- Add fields -->
-                <xpath expr="//form/sheet/group" position="after">
+                <!-- Add qualification / opportunity fields just before the notebook -->
+                <xpath expr="//notebook" position="before">
                     <group string="Qualification / Opportunity">
                         <group>
                             <field name="dr_no"/>
@@ -51,7 +51,7 @@
                         </group>
                         <group>
                             <field name="second_contact_person_id"/>
-                            <field name="informatica_solution_id"/>
+                            <field name="informatica_solution_id" options="{'no_create': True}"/>
                             <field name="selection_criterias"/>
                         </group>
                     </group>
@@ -59,10 +59,10 @@
                         <group>
                             <field name="gcp_billing_account"/>
                             <field name="ps_opp_exist"/>
-                            <field name="year_of_commit" widget="date" options="{'format': 'DD/MM/YYYY'}"/>
+                            <field name="year_of_commit"/>
                         </group>
                         <group>
-                            <field name="vendor_subscription_start_date" widget="date" options="{'format': 'DD/MM/YYYY'}"/>
+                            <field name="vendor_subscription_start_date"/>
                             <field name="training_opp_exist"/>
                         </group>
                     </group>
@@ -94,33 +94,20 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
             <field name="arch" type="xml">
-                <!-- Add Second Currency fields to kanban view -->
-                <xpath expr="/kanban//field[@name='name']" position="after">
-                    <field name="currency_id" invisible="1"/>
-                </xpath>
+                <!-- Show the deal-currency revenue on the kanban card -->
                 <xpath expr="//templates/t[@t-name='card']//div[hasclass('o_kanban_card_crm_lead_revenue')]" position="before">
-                    <div class="o_kanban_card_crm_lead_revenue">
-                        <t t-if="record.planned_revenue_second.raw_value or record.value.raw_value">
+                    <field name="currency_id" invisible="1"/>
+                    <div class="o_kanban_card_crm_lead_revenue_second">
+                        <t t-if="record.planned_revenue_second.raw_value or record.prorated_revenue_second.raw_value">
                             <t t-if="record.planned_revenue_second.raw_value">
                                 <field name="planned_revenue_second" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             </t>
-                            <t t-if="record.planned_revenue_second.raw_value and record.value.raw_value"> / </t>
-                            <t t-if="record.value.raw_value">
-                                <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <t t-if="record.planned_revenue_second.raw_value and record.prorated_revenue_second.raw_value"> / </t>
+                            <t t-if="record.prorated_revenue_second.raw_value">
+                                <field name="prorated_revenue_second" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             </t>
                         </t>
                     </div>
-                </xpath>
-            </field>
-        </record>
-        <!-- CRM Lead Search View Inheritance -->
-        <record id="view_crm_lead_search_inherit" model="ir.ui.view">
-            <field name="name">crm.lead.search.inherit</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
-            <field name="arch" type="xml">
-                <xpath expr="//search" position="inside">
-                    <filter name="filter_by_pipeline" string="Pipeline" domain="[('pipeline_id', '=', context.get('default_pipeline_id') or pipeline_id)]"/>
                 </xpath>
             </field>
         </record>

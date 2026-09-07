@@ -11,5 +11,5 @@ class CrmStage(models.Model):
         'crm_stage_informatica_pipeline_rel',
         'stage_id',
         'pipeline_id',
-        string='Pipelines'
+        string='Pipelines',
     )

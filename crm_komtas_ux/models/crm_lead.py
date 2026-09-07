@@ -52,7 +52,7 @@ class CrmLead(models.Model):
         for lead in self:
             if not lead.stage_id:
                 lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
-            elif lead.pipeline_id and lead.pipeline_id not in lead.stage_id.pipeline_ids:
+            elif lead.pipeline_id and lead.pipeline_id.id not in lead.stage_id.pipeline_ids.ids:
                 lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
 
     def _stage_find(self, pipeline_id=False, domain=None, order='sequence, id', limit=1):
@@ -85,50 +85,55 @@ class CrmLead(models.Model):
         'crm_lead_service_competitor_rel',
         'lead_id',
         'partner_id',
-        string='Service Competitors'
+        string='Service Competitors',
     )
     tech_competitor_ids = fields.Many2many(
         'res.partner',
         'crm_lead_tech_competitor_rel',
         'lead_id',
         'partner_id',
-        string='Technology Competitors'
+        string='Technology Competitors',
     )
 
     authority = fields.Char(string='Authority')
     budget = fields.Char(string='Budget')
-    lead_source_details = fields.Html(string='Lead Source Details')
-    risk = fields.Html(string='Risk')
-    timing = fields.Html(string='Timing')
+    lead_source_details = fields.Text(string='Lead Source Details')
+    risk = fields.Text(string='Risk')
+    timing = fields.Text(string='Timing')
 
-    currency_id = fields.Many2one('res.currency', string='Currency')
-    planned_revenue_second = fields.Monetary(
-        'Revenue Other Currency',
-        currency_field='currency_id',
-        tracking=True
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Deal Currency',
+        default=lambda self: self.env.company.currency_id,
     )
-    value = fields.Monetary(
-        'Value',
+    planned_revenue_second = fields.Monetary(
+        string='Revenue Other Currency',
         currency_field='currency_id',
-        compute='_compute_value',
-        store=True
+        tracking=True,
+    )
+    prorated_revenue_second = fields.Monetary(
+        string='Prorated Revenue (Other Currency)',
+        currency_field='currency_id',
+        compute='_compute_prorated_revenue_second',
     )
 
     @api.depends('planned_revenue_second', 'probability')
-    def _compute_value(self):
+    def _compute_prorated_revenue_second(self):
         for lead in self:
-            if lead.planned_revenue_second and lead.probability:
-                lead.value = lead.planned_revenue_second * (lead.probability / 100)
-            else:
-                lead.value = 0.0
+            lead.prorated_revenue_second = lead.planned_revenue_second * (lead.probability / 100.0)
 
     @api.onchange('currency_id', 'planned_revenue_second')
     def _onchange_planned_revenue_second(self):
-        if self.currency_id and self.planned_revenue_second:
-            company_currency = self.company_id.currency_id if self.company_id else self.env.company.currency_id
-            self.expected_revenue = self.currency_id._convert(
-                self.planned_revenue_second,
-                company_currency,
-                self.company_id or self.env.company,
-                self.create_date or fields.Date.today()
-            )
+        """Mirror the amount quoted in the customer's currency into the
+        company-currency ``expected_revenue`` so that probability weighting
+        and pipeline reporting stay consistent.
+        """
+        if not self.currency_id:
+            return
+        company = self.company_id or self.env.company
+        self.expected_revenue = self.currency_id._convert(
+            self.planned_revenue_second,
+            company.currency_id,
+            company,
+            self.create_date or fields.Date.context_today(self),
+        )
