@@ -167,7 +167,7 @@ class CrmLead(models.Model):
             value = getattr(lead, fname, False)
             if hasattr(value, '_name'):
                 value = value.id if value else False
-            if not value and value != 0:
+            if value is False or value is None or (isinstance(value, str) and not value):
                 missing.append({
                     'name': fname,
                     'label': field.field_description,
@@ -206,7 +206,7 @@ class CrmLead(models.Model):
                 value = getattr(lead, fname, False)
                 if hasattr(value, '_name'):
                     value = value.id if value else False
-                if not value and value != 0:
+                if value is False or value is None or (isinstance(value, str) and not value):
                     missing_labels.append(field.field_description)
             if missing_labels:
                 raise ValidationError(
