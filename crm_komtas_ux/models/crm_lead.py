@@ -10,22 +10,26 @@ class CrmLead(models.Model):
 
     sequence_enrollment = fields.Boolean(string='Sequence Enrollment')
     second_contact_person_id = fields.Many2one('res.partner', string='Second Contact Person')
-    hyperscaler = fields.Selection([
-        ('ms_azure', 'MS Azure'),
-        ('gcp', 'GCP'),
-        ('aws', 'AWS'),
-    ], string='Hyperscaler')
+    hyperscaler_ids = fields.Many2many(
+        'hyperscalers',
+        'crm_lead_hyperscaler_rel',
+        'lead_id',
+        'hyperscaler_id',
+        string='Hyperscalers',
+    )
     informatica_solution_id = fields.Many2one('informatica.solution', string='Informatica Solution')
     pipeline_id = fields.Many2one('informatica.pipeline', string='Pipeline')
     technology = fields.Selection([
         ('analytics', 'Analytics'),
         ('data', 'Data'),
     ], string='Technology')
-    selection_criterias = fields.Selection([
-        ('technical_win', 'Technical Win'),
-        ('cost_advantage', 'Cost Advantage'),
-        ('delivery_capabilities', 'Delivery Capabilities'),
-    ], string='Selection Criterias')
+    selection_criterias_ids = fields.Many2many(
+        'criterias',
+        'crm_lead_criterias_rel',
+        'lead_id',
+        'criteria_id',
+        string='Selection Criterias',
+    )
 
     gcp_billing_account = fields.Char(string='GCP Billing Account')
     ps_opp_exist = fields.Boolean(string='PS Opportunity Exists')

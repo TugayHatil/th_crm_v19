@@ -46,13 +46,13 @@
                         <group>
                             <field name="dr_no"/>
                             <field name="sequence_enrollment"/>
-                            <field name="hyperscaler"/>
+                            <field name="hyperscaler_ids" widget="many2many_tags" options="{'no_create': True}"/>
                             <field name="technology"/>
                         </group>
                         <group>
                             <field name="second_contact_person_id"/>
                             <field name="informatica_solution_id" options="{'no_create': True}"/>
-                            <field name="selection_criterias"/>
+                            <field name="selection_criterias_ids" widget="many2many_tags" options="{'no_create': True}"/>
                         </group>
                     </group>
                     <group string="Commercial / Business">

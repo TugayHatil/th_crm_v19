@@ -15,6 +15,8 @@
         'views/crm_stage_views.xml',
         'views/informatica_solution_views.xml',
         'views/informatica_pipeline_views.xml',
+        'views/hyperscalers_views.xml',
+        'views/criterias_views.xml',
     ],
     'installable': True,
     'application': False,

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Hyperscalers List View -->
+        <record id="view_hyperscalers_tree" model="ir.ui.view">
+            <field name="name">hyperscalers.tree</field>
+            <field name="model">hyperscalers</field>
+            <field name="arch" type="xml">
+                <list string="Hyperscalers">
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Hyperscalers Form View -->
+        <record id="view_hyperscalers_form" model="ir.ui.view">
+            <field name="name">hyperscalers.form</field>
+            <field name="model">hyperscalers</field>
+            <field name="arch" type="xml">
+                <form string="Hyperscaler">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Hyperscalers Action -->
+        <record id="action_hyperscalers" model="ir.actions.act_window">
+            <field name="name">Hyperscalers</field>
+            <field name="res_model">hyperscalers</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Hyperscaler!
+                </p>
+            </field>
+        </record>
+
+        <!-- Hyperscalers Menu Item — config altında Pipeline menüsünün hemen altında -->
+        <menuitem id="menu_hyperscalers"
+                  name="Hyperscalers"
+                  parent="crm.menu_crm_config_lead"
+                  action="action_hyperscalers"
+                  sequence="12"/>
+    </data>
+</odoo>
