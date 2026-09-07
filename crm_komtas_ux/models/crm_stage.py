@@ -13,3 +13,13 @@ class CrmStage(models.Model):
         'pipeline_id',
         string='Pipelines',
     )
+
+    required_fields = fields.Many2many(
+        'ir.model.fields',
+        'crm_stage_required_fields_rel',
+        'stage_id',
+        'field_id',
+        string='Required Fields',
+        domain=[('model_id.model', '=', 'crm.lead'), ('ttype', 'not in', ['one2many', 'many2many', 'binary']), ('store', '=', True)],
+        help='Bu aşamaya geçildiğinde seçilen alanlar zorunlu hale gelir.',
+    )

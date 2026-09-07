@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class CrmLead(models.Model):
@@ -141,3 +142,31 @@ class CrmLead(models.Model):
             company,
             self.create_date or fields.Date.context_today(self),
         )
+
+    def write(self, vals):
+        """Aşama değişiminde, yeni aşamada zorunlu tanımlı alanlar boşsa hata fırlat."""
+        if 'stage_id' in vals:
+            new_stage = self.env['crm.stage'].browse(vals['stage_id'])
+            if new_stage.required_fields:
+                missing_per_lead = []
+                for lead in self:
+                    missing_labels = []
+                    for field in new_stage.required_fields:
+                        fname = field.name
+                        # Değer vals içinde mi geliyor, yoksa kayıtta mevcut mu?
+                        value = vals.get(fname, getattr(lead, fname, False))
+                        # Many2one için id kontrolü
+                        if hasattr(value, 'id'):
+                            value = value.id
+                        if not value and value != 0:
+                            missing_labels.append(field.field_description)
+                    if missing_labels:
+                        missing_per_lead.append(
+                            "'%s' için zorunlu alanlar: %s" % (lead.name, ', '.join(missing_labels))
+                        )
+                if missing_per_lead:
+                    raise ValidationError(
+                        "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
+                        % (new_stage.name, '\n'.join(missing_per_lead))
+                    )
+        return super().write(vals)
