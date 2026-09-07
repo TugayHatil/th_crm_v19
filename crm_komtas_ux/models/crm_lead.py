@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class CrmLead(models.Model):
@@ -144,25 +148,34 @@ class CrmLead(models.Model):
         )
 
     def write(self, vals):
+        _logger.warning('[crm_komtas_ux] write called with vals keys: %s', list(vals.keys()))
         if 'stage_id' in vals:
-            stage = self.env['crm.stage'].browse(vals['stage_id']).exists()
-            if stage:
-                required_fields = stage.sudo().required_fields
-                if required_fields:
-                    for lead in self:
-                        missing_labels = []
-                        for field in required_fields:
-                            fname = field.name
-                            value = getattr(lead, fname, False)
-                            if hasattr(value, '_name'):
-                                value = value.id if value else False
-                            if not value and value != 0:
-                                missing_labels.append(field.field_description)
-                        if missing_labels:
-                            raise ValidationError(
-                                "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
-                                % (stage.name, ', '.join(missing_labels))
-                            )
+            new_stage_id = vals['stage_id']
+            _logger.warning('[crm_komtas_ux] stage_id change detected: %s', new_stage_id)
+            if new_stage_id:
+                stage = self.env['crm.stage'].browse(new_stage_id).exists()
+                if stage:
+                    required_fields = stage.sudo().required_fields
+                    _logger.warning('[crm_komtas_ux] target stage: %s, required_fields count: %d', stage.name, len(required_fields) if required_fields else 0)
+                    if required_fields:
+                        for lead in self:
+                            missing_labels = []
+                            for field in required_fields:
+                                fname = field.name
+                                value = getattr(lead, fname, False)
+                                if hasattr(value, '_name'):
+                                    value = value.id if value else False
+                                _logger.warning('[crm_komtas_ux] checking field %s on lead %s: value=%s', fname, lead.id, value)
+                                if not value and value != 0:
+                                    missing_labels.append(field.field_description)
+                            if missing_labels:
+                                _logger.warning('[crm_komtas_ux] MISSING fields: %s', missing_labels)
+                                raise ValidationError(
+                                    "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
+                                    % (stage.name, ', '.join(missing_labels))
+                                )
+                            else:
+                                _logger.warning('[crm_komtas_ux] All required fields OK')
         return super(CrmLead, self).write(vals)
 
     @api.constrains('stage_id')
