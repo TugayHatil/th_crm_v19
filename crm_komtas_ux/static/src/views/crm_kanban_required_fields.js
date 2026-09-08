@@ -2,6 +2,7 @@
 
 import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
+import { setHighlightFields, clearHighlightFields } from "./required_fields_highlight.js";
 
 patch(CrmKanbanDynamicGroupList.prototype, {
     async moveRecord(dataRecordId, dataGroupId, refId, targetGroupId) {
@@ -76,9 +77,12 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                     {
                                         name: "Alanları Doldur",
                                         onClick: () => {
-                                            action.context.highlight_fields = result.missing.map((f) => f.name);
+                                            setHighlightFields(result.missing.map((f) => f.name));
                                             actionService.doAction(action, {
-                                                onClose: onDialogClose,
+                                                onClose: () => {
+                                                    clearHighlightFields();
+                                                    onDialogClose();
+                                                },
                                             });
                                         },
                                     },
