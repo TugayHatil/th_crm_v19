@@ -91,6 +91,20 @@ class CrmLead(models.Model):
                             )
         
         return super().write(vals)
+
+    def action_change_stage(self):
+        """Open wizard to change stage with validation."""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Aşama Değiştir',
+            'res_model': 'crm.lead.stage.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_current_stage_id': self.stage_id.id,
+            },
+        }
     @api.model_create_multi
     def create(self, vals_list):
         """Set default stage for new leads."""

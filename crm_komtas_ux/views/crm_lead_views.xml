@@ -36,9 +36,14 @@
                         </div>
                     </h2>
                 </xpath>
-                <!-- Override stage_id field domain only, keep original widget -->
+                <!-- Override stage_id field domain and make readonly in form view -->
                 <xpath expr="//field[@name='stage_id']" position="attributes">
                     <attribute name="domain">['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <!-- Add a button next to stage_id to change stage with validation -->
+                <xpath expr="//field[@name='stage_id']" position="after">
+                    <button name="action_change_stage" type="object" string="Aşama Değiştir" class="oe_link"/>
                 </xpath>
                 <!-- Add qualification / opportunity fields just before the notebook -->
                 <xpath expr="//notebook" position="before">

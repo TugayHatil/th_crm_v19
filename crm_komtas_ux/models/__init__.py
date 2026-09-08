@@ -2,7 +2,8 @@
 
 from . import crm_lead
 from . import crm_stage
-from . import informatica_solution
-from . import informatica_pipeline
-from . import hyperscalers
+from . import crm_lead_stage_wizard
 from . import criterias
+from . import hyperscalers
+from . import informatica_pipeline
+from . import informatica_solution

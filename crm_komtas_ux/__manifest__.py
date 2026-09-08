@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'views/crm_lead_views.xml',
         'views/crm_stage_views.xml',
+        'views/crm_lead_stage_wizard_views.xml',
         'views/informatica_solution_views.xml',
         'views/informatica_pipeline_views.xml',
         'views/hyperscalers_views.xml',
