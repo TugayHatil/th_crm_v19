@@ -76,18 +76,33 @@ patch(FormController.prototype, {
                         [record.resId, currentStageId],
                     );
                     if (result && result.missing && result.missing.length > 0) {
-                        const fieldLabels = result.missing.map((f) => f.label).join(", ");
-                        const missingFieldNames = result.missing.map((f) => f.name);
-                        const notificationService = this.env.services.notification;
-                        notificationService.add(
-                            `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
-                            {
-                                type: "danger",
-                                sticky: true,
+                        const actuallyMissing = result.missing.filter((f) => {
+                            const val = record.data[f.name];
+                            if (val === false || val === null || val === undefined || val === "") {
+                                return true;
                             }
-                        );
-                        highlightMissingFields(missingFieldNames);
-                        return false;
+                            if (Array.isArray(val) && val.length === 0) {
+                                return true;
+                            }
+                            if (val && val.length === 0 && typeof val.length === "number") {
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (actuallyMissing.length > 0) {
+                            const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
+                            const missingFieldNames = actuallyMissing.map((f) => f.name);
+                            const notificationService = this.env.services.notification;
+                            notificationService.add(
+                                `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
+                                {
+                                    type: "danger",
+                                    sticky: true,
+                                }
+                            );
+                            highlightMissingFields(missingFieldNames);
+                            return false;
+                        }
                     }
                 } catch (e) {
                     console.error("[crm_komtas_ux] Error checking required fields in form:", e);
