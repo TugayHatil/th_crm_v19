@@ -33,10 +33,6 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                         const model = this.model;
 
                         const fieldNames = result.missing.map((f) => f.label).join(", ");
-                        notificationService.add(
-                            `Bu fırsatı "${targetGroup.displayName}" aşamasına taşımak için şu alanları doldurun: ${fieldNames}`,
-                            { type: "warning" }
-                        );
 
                         const action = {
                             type: "ir.actions.act_window",
@@ -51,27 +47,46 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                             },
                         };
 
-                        actionService.doAction(action, {
-                            onClose: async () => {
-                                try {
-                                    const recheck = await ormService.call(
+                        const onDialogClose = async () => {
+                            try {
+                                const recheck = await ormService.call(
+                                    "crm.lead",
+                                    "check_required_fields_for_stage",
+                                    [leadResId, targetStageId],
+                                );
+                                if (!recheck.missing || recheck.missing.length === 0) {
+                                    await ormService.call(
                                         "crm.lead",
-                                        "check_required_fields_for_stage",
+                                        "move_to_stage",
                                         [leadResId, targetStageId],
                                     );
-
-                                    if (!recheck.missing || recheck.missing.length === 0) {
-                                        await ormService.call(
-                                            "crm.lead",
-                                            "move_to_stage",
-                                            [leadResId, targetStageId],
-                                        );
-                                    }
-                                } catch (e) {
-                                    console.error("[crm_komtas_ux] Error after dialog close:", e);
                                 }
-                                await model.load();
-                            },
+                            } catch (e) {
+                                console.error("[crm_komtas_ux] Error after dialog close:", e);
+                            }
+                            await model.load();
+                        };
+
+                        notificationService.add(
+                            `Bu fırsatı "${targetGroup.displayName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldNames}`,
+                            {
+                                type: "danger",
+                                sticky: true,
+                                buttons: [
+                                    {
+                                        name: "Alanları Doldur",
+                                        onClick: () => {
+                                            actionService.doAction(action, {
+                                                onClose: onDialogClose,
+                                            });
+                                        },
+                                    },
+                                ],
+                            }
+                        );
+
+                        actionService.doAction(action, {
+                            onClose: onDialogClose,
                         });
                         return;
                     }
