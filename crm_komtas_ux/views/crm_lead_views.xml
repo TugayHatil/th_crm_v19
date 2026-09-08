@@ -36,9 +36,9 @@
                         </div>
                     </h2>
                 </xpath>
-                <!-- Override stage_id field with pipeline-based domain -->
-                <xpath expr="//field[@name='stage_id']" position="replace">
-                    <field name="stage_id" widget="statusbar" domain="['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]"/>
+                <!-- Override stage_id field domain only, keep original widget -->
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="domain">['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]</attribute>
                 </xpath>
                 <!-- Add qualification / opportunity fields just before the notebook -->
                 <xpath expr="//notebook" position="before">

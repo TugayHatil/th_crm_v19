@@ -187,9 +187,3 @@ class CrmLead(models.Model):
         lead.write({'stage_id': target_stage_id})
         return True
 
-    def web_save(self, vals, specification, next_id=None):
-        return super(CrmLead, self).web_save(vals, specification, next_id=next_id)
-
-    def write(self, vals):
-        return super(CrmLead, self).write(vals)
-
