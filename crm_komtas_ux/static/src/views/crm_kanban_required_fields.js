@@ -126,7 +126,8 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                             await model.load();
                         };
 
-                        notificationService.add(
+                        let notificationId = null;
+                        notificationId = notificationService.add(
                             `Bu fırsatı "${targetGroup.displayName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldNames}`,
                             {
                                 type: "danger",
@@ -138,6 +139,9 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                             const missingFieldNames = result.missing.map((f) => f.name);
                                             actionService.doAction(action, {
                                                 onClose: () => {
+                                                    if (notificationId) {
+                                                        notificationService.remove(notificationId);
+                                                    }
                                                     onDialogClose();
                                                 },
                                             });
