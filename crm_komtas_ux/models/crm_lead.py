@@ -86,7 +86,9 @@ class CrmLead(models.Model):
                 missing_field_names.append(fname)
         
         if missing:
-            # Pass missing field names to context for JavaScript to handle
+            # Revert stage change and pass missing field names for JavaScript highlighting
+            if self._origin and self._origin.stage_id:
+                self.stage_id = self._origin.stage_id
             return {
                 'warning': {
                     'title': 'Zorunlu Alanlar Eksik',
