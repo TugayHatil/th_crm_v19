@@ -10,7 +10,6 @@ function highlightMissingFields(fieldNames) {
         style.id = styleId;
         style.textContent = `
             .o_required_highlight {
-                border: 2px solid #dc3545 !important;
                 border-radius: 4px;
                 background-color: #fff5f5 !important;
                 padding: 4px;
