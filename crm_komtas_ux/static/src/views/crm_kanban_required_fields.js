@@ -2,6 +2,7 @@
 
 import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
+import { FormController } from "@web/views/form/form_controller";
 
 function highlightMissingFields(fieldNames) {
     const styleId = "o_required_highlight_style";
@@ -61,6 +62,42 @@ function highlightMissingFields(fieldNames) {
     };
     setTimeout(tryHighlight, 300);
 }
+
+patch(FormController.prototype, {
+    async save(params = {}) {
+        const root = this.model.root;
+        if (root.resModel === "crm.lead" && root.changes && 'stage_id' in root.changes) {
+            const stageChange = root.changes.stage_id;
+            const newStageId = Array.isArray(stageChange) ? stageChange[0] : stageChange;
+            if (newStageId && root.resId) {
+                try {
+                    const result = await this.env.services.orm.call(
+                        "crm.lead",
+                        "check_required_fields_for_stage",
+                        [root.resId, newStageId],
+                    );
+                    if (result && result.missing && result.missing.length > 0) {
+                        const fieldLabels = result.missing.map((f) => f.label).join(", ");
+                        const missingFieldNames = result.missing.map((f) => f.name);
+                        const notificationService = this.env.services.notification;
+                        notificationService.add(
+                            `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
+                            {
+                                type: "danger",
+                                sticky: true,
+                            }
+                        );
+                        highlightMissingFields(missingFieldNames);
+                        return false;
+                    }
+                } catch (e) {
+                    console.error("[crm_komtas_ux] Error checking required fields in form:", e);
+                }
+            }
+        }
+        return super.save(params);
+    },
+});
 
 patch(CrmKanbanDynamicGroupList.prototype, {
     async moveRecord(dataRecordId, dataGroupId, refId, targetGroupId) {
