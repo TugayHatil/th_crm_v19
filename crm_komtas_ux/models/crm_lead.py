@@ -73,6 +73,7 @@ class CrmLead(models.Model):
             return
         
         missing = []
+        missing_field_names = []
         for field in required_fields:
             fname = field.name
             value = getattr(self, fname, False)
@@ -82,16 +83,16 @@ class CrmLead(models.Model):
                 is_empty = value is False or value is None or (isinstance(value, str) and not value)
             if is_empty:
                 missing.append(field.field_description)
+                missing_field_names.append(fname)
         
         if missing:
-            # Revert stage change by getting the original value
-            if self._origin and self._origin.stage_id:
-                self.stage_id = self._origin.stage_id
+            # Pass missing field names to context for JavaScript to handle
             return {
                 'warning': {
                     'title': 'Zorunlu Alanlar Eksik',
                     'message': f'Bu aşamaya geçiş için şu alanları doldurmalısınız: {", ".join(missing)}',
-                }
+                },
+                'context': {'missing_required_fields': missing_field_names}
             }
 
     def write(self, vals):

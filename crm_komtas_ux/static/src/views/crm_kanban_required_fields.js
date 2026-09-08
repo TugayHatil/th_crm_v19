@@ -89,6 +89,9 @@ patch(FormController.prototype, {
             return;
         }
         
+        // Store original stage to revert if needed
+        const originalStageId = ev.data?.oldValue || record._changes?.stage_id?.originalValue;
+        
         this.orm.call(
             "crm.lead",
             "check_required_fields_for_stage",
@@ -111,6 +114,8 @@ patch(FormController.prototype, {
                 if (actuallyMissing.length > 0) {
                     const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
                     const missingFieldNames = actuallyMissing.map((f) => f.name);
+                    
+                    // Show notification
                     this.env.services.notification.add(
                         `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
                         {
@@ -118,7 +123,14 @@ patch(FormController.prototype, {
                             sticky: true,
                         }
                     );
+                    
+                    // Highlight missing fields
                     highlightMissingFields(missingFieldNames);
+                    
+                    // Revert stage change if original stage exists
+                    if (originalStageId && originalStageId !== currentStageId) {
+                        record.update({ stage_id: originalStageId });
+                    }
                 }
             }
         }).catch((e) => {
