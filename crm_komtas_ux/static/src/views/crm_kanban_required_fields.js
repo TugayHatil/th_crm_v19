@@ -76,6 +76,7 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                     {
                                         name: "Alanları Doldur",
                                         onClick: () => {
+                                            action.context.highlight_fields = result.missing.map((f) => f.name);
                                             actionService.doAction(action, {
                                                 onClose: onDialogClose,
                                             });
@@ -84,10 +85,6 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                 ],
                             }
                         );
-
-                        actionService.doAction(action, {
-                            onClose: onDialogClose,
-                        });
                         return;
                     }
                 } catch (e) {
