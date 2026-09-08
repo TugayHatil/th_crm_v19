@@ -20,6 +20,10 @@ class CrmStage(models.Model):
         'stage_id',
         'field_id',
         string='Required Fields',
-        domain=[('model_id.model', '=', 'crm.lead'), ('ttype', 'not in', ['one2many', 'binary']), ('store', '=', True)],
+        domain=[
+            ('model_id.model', '=', 'crm.lead'),
+            '|', ('ttype', '=', 'many2many'),
+            '&', ('ttype', 'not in', ['one2many', 'binary']), ('store', '=', True),
+        ],
         help='Bu aşamaya geçildiğinde seçilen alanlar zorunlu hale gelir.',
     )
