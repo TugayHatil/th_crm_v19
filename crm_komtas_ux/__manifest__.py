@@ -21,8 +21,6 @@
     'assets': {
         'web.assets_backend': [
             'crm_komtas_ux/static/src/views/crm_kanban_required_fields.js',
-            'crm_komtas_ux/static/src/views/required_fields_highlight.js',
-            'crm_komtas_ux/static/src/views/required_fields_highlight.css',
         ],
     },
     'installable': True,

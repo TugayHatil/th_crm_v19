@@ -2,7 +2,66 @@
 
 import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
-import { setHighlightFields, clearHighlightFields } from "./required_fields_highlight.js";
+
+function highlightMissingFields(fieldNames) {
+    const styleId = "o_required_highlight_style";
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement("style");
+        style.id = styleId;
+        style.textContent = `
+            .o_required_highlight {
+                border: 2px solid #dc3545 !important;
+                border-radius: 4px;
+                background-color: #fff5f5 !important;
+                padding: 4px;
+            }
+            .o_required_highlight_label {
+                color: #dc3545 !important;
+                font-weight: bold !important;
+            }
+            .o_required_highlight_label::after {
+                content: " *";
+                color: #dc3545;
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const applyHighlight = () => {
+        const modal = document.querySelector(".o_dialog:not(.o_modal_closed) .o_form_view") ||
+                      document.querySelector(".modal-body .o_form_view") ||
+                      document.querySelector(".o_form_view");
+        if (!modal) {
+            return false;
+        }
+        let found = 0;
+        for (const fieldName of fieldNames) {
+            const fieldEl = modal.querySelector(`[name="${fieldName}"]`);
+            if (fieldEl) {
+                const container = fieldEl.closest(".o_field_widget") || fieldEl;
+                container.classList.add("o_required_highlight");
+                const labelEl = modal.querySelector(`label[for="${fieldName}"]`);
+                if (labelEl) {
+                    labelEl.classList.add("o_required_highlight_label");
+                }
+                found++;
+            }
+        }
+        return found > 0;
+    };
+
+    let attempts = 0;
+    const maxAttempts = 10;
+    const tryHighlight = () => {
+        attempts++;
+        if (applyHighlight() || attempts >= maxAttempts) {
+            return;
+        }
+        setTimeout(tryHighlight, 200);
+    };
+    setTimeout(tryHighlight, 300);
+}
 
 patch(CrmKanbanDynamicGroupList.prototype, {
     async moveRecord(dataRecordId, dataGroupId, refId, targetGroupId) {
@@ -77,13 +136,13 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                     {
                                         name: "Alanları Doldur",
                                         onClick: () => {
-                                            setHighlightFields(result.missing.map((f) => f.name));
+                                            const missingFieldNames = result.missing.map((f) => f.name);
                                             actionService.doAction(action, {
                                                 onClose: () => {
-                                                    clearHighlightFields();
                                                     onDialogClose();
                                                 },
                                             });
+                                            highlightMissingFields(missingFieldNames);
                                         },
                                     },
                                 ],
