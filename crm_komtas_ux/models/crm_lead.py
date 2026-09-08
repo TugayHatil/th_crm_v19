@@ -193,26 +193,3 @@ class CrmLead(models.Model):
     def write(self, vals):
         return super(CrmLead, self).write(vals)
 
-    @api.constrains('stage_id')
-    def _check_required_fields_for_stage(self):
-        """Aşama değişiminde, yeni aşamada zorunlu tanımlı alanlar boşsa hata fırlat."""
-        for lead in self:
-            required = lead.stage_id.sudo().required_fields
-            if not required:
-                continue
-            missing_labels = []
-            for field in required:
-                fname = field.name
-                value = getattr(lead, fname, False)
-                if hasattr(value, '_name'):
-                    is_empty = not bool(value)
-                else:
-                    is_empty = value is False or value is None or (isinstance(value, str) and not value)
-                if is_empty:
-                    missing_labels.append(field.field_description)
-            if missing_labels:
-                raise ValidationError(
-                    "'%s' aşamasına geçiş için aşağıdaki zorunlu alanları doldurun:\n\n%s"
-                    % (lead.stage_id.name, ', '.join(missing_labels))
-                )
-
