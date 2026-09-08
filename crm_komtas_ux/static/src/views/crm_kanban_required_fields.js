@@ -6,6 +6,7 @@ import { FormController } from "@web/views/form/form_controller";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { FieldMany2One } from "@web/views/fields/many2one/many2one";
+import { Component } from "@odoo/owl";
 
 function highlightMissingFields(fieldNames) {
     const styleId = "o_required_highlight_style";
@@ -93,6 +94,9 @@ patch(FormController.prototype, {
         // Store original stage to revert if needed
         const originalStageId = ev.data?.oldValue || record._changes?.stage_id?.originalValue;
         
+        // Set a flag to prevent Python write check during revert
+        this._jsStageCheckInProgress = true;
+        
         this.orm.call(
             "crm.lead",
             "check_required_fields_for_stage",
@@ -116,9 +120,11 @@ patch(FormController.prototype, {
                     const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
                     const missingFieldNames = actuallyMissing.map((f) => f.name);
                     
-                    // Revert stage change immediately
+                    // Revert stage change immediately with context to skip Python check
                     if (originalStageId && originalStageId !== currentStageId) {
                         record.update({ stage_id: originalStageId });
+                        // Save with context to skip Python check
+                        this.orm.call("crm.lead", "write", [[record.resId], { stage_id: originalStageId }], { context: { js_stage_revert: true } });
                     }
                     
                     // Show notification with button - same as kanban flow
@@ -184,8 +190,10 @@ patch(FormController.prototype, {
                     );
                 }
             }
+            this._jsStageCheckInProgress = false;
         }).catch((e) => {
             console.error("[crm_komtas_ux] Error checking required fields on stage change:", e);
+            this._jsStageCheckInProgress = false;
         });
     },
 });

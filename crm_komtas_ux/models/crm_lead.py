@@ -62,8 +62,35 @@ class CrmLead(models.Model):
             if not self.stage_id or self.pipeline_id.id not in self.stage_id.pipeline_ids.ids:
                 self.stage_id = self._stage_find(domain=[('fold', '=', False)]).id
 
-
-
+    def write(self, vals):
+        """Check required fields before changing stage, but skip if from JS check."""
+        # Skip check if this is a revert from JavaScript stage check
+        if 'stage_id' in vals and not self.env.context.get('skip_required_check') and not self.env.context.get('js_stage_revert'):
+            target_stage_id = vals['stage_id']
+            if isinstance(target_stage_id, (list, tuple)):
+                target_stage_id = target_stage_id[0] if target_stage_id else False
+            
+            if target_stage_id:
+                target_stage = self.env['crm.stage'].browse(target_stage_id).exists()
+                if target_stage and target_stage.required_fields:
+                    for lead in self:
+                        missing = []
+                        for field in target_stage.sudo().required_fields:
+                            fname = field.name
+                            value = getattr(lead, fname, False)
+                            if hasattr(value, '_name'):
+                                is_empty = not bool(value)
+                            else:
+                                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+                            if is_empty:
+                                missing.append(field.field_description)
+                        
+                        if missing:
+                            raise ValidationError(
+                                f'Bu aşamaya geçiş için şu zorunlu alanları doldurmalısınız: {", ".join(missing)}'
+                            )
+        
+        return super().write(vals)
     @api.model_create_multi
     def create(self, vals_list):
         """Set default stage for new leads."""
