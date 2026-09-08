@@ -68,167 +68,111 @@ function highlightMissingFields(fieldNames) {
 patch(FormController.prototype, {
     setup() {
         super.setup(...arguments);
-        if (this.props.resModel === "crm.lead") {
-            this._stageChangeHandler = this._onStageChange.bind(this);
-        }
-    },
-    async loadRecord(params) {
-        await super.loadRecord(...arguments);
-        if (this.props.resModel === "crm.lead" && this.model.root) {
-            this.model.root.on("change:stage_id", this._stageChangeHandler);
-        }
-    },
-    _onStageChange(ev) {
-        const record = ev.target;
-        if (!record || !record.resId) {
-            return;
-        }
-        const currentStageVal = record.data.stage_id;
-        const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
-        if (!currentStageId) {
-            return;
-        }
-        
-        // Store original stage to revert if needed
-        const originalStageId = ev.data?.oldValue || record._changes?.stage_id?.originalValue;
-        
-        this.orm.call(
-            "crm.lead",
-            "check_required_fields_for_stage",
-            [record.resId, currentStageId],
-        ).then((result) => {
-            if (result && result.missing && result.missing.length > 0) {
-                const actuallyMissing = result.missing.filter((f) => {
-                    const val = record.data[f.name];
-                    if (val === false || val === null || val === undefined || val === "") {
-                        return true;
-                    }
-                    if (Array.isArray(val) && val.length === 0) {
-                        return true;
-                    }
-                    if (val && val.length === 0 && typeof val.length === "number") {
-                        return true;
-                    }
-                    return false;
-                });
-                if (actuallyMissing.length > 0) {
-                    const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
-                    const missingFieldNames = actuallyMissing.map((f) => f.name);
-                    
-                    // Revert stage change immediately to prevent write from being called
-                    if (originalStageId && originalStageId !== currentStageId) {
-                        record.update({ stage_id: originalStageId });
-                    }
-                    
-                    // Show notification with button - same as kanban flow
-                    const ormService = this.orm;
-                    const actionService = this.env.services.action;
-                    const notificationService = this.env.services.notification;
-                    const leadResId = record.resId;
-                    
-                    const action = {
-                        type: "ir.actions.act_window",
-                        name: "Zorunlu Alanları Doldurun",
-                        res_model: "crm.lead",
-                        res_id: leadResId,
-                        view_mode: "form",
-                        views: [[false, "form"]],
-                        target: "new",
-                        context: {
-                            default_stage_id: currentStageId,
-                            from_form_view: true,
-                        },
-                    };
-
-                    const onDialogClose = async () => {
-                        try {
-                            const recheck = await ormService.call(
-                                "crm.lead",
-                                "check_required_fields_for_stage",
-                                [leadResId, currentStageId],
-                            );
-                            if (!recheck.missing || recheck.missing.length === 0) {
-                                await ormService.call(
-                                    "crm.lead",
-                                    "move_to_stage",
-                                    [leadResId, currentStageId],
-                                );
-                                // Reload the form to show the new stage
-                                this.model.load();
-                            }
-                        } catch (e) {
-                            console.error("[crm_komtas_ux] Error after dialog close:", e);
-                        }
-                    };
-
-                    const closeNotification = notificationService.add(
-                        `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
-                        {
-                            type: "danger",
-                            sticky: true,
-                            buttons: [
-                                {
-                                    name: "Alanları Doldur",
-                                    onClick: () => {
-                                        closeNotification();
-                                        actionService.doAction(action, {
-                                            onClose: () => {
-                                                onDialogClose();
-                                            },
-                                        });
-                                        highlightMissingFields(missingFieldNames);
-                                    },
-                                },
-                            ],
-                        }
-                    );
-                }
-            }
-        }).catch((e) => {
-            console.error("[crm_komtas_ux] Error checking required fields on stage change:", e);
-        });
     },
     async onWillSaveRecord(record) {
         if (record.resModel === "crm.lead" && record.resId) {
             const currentStageVal = record.data.stage_id;
             const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
-            if (currentStageId) {
-                try {
-                    const result = await this.orm.call(
-                        "crm.lead",
-                        "check_required_fields_for_stage",
-                        [record.resId, currentStageId],
-                    );
-                    if (result && result.missing && result.missing.length > 0) {
-                        const actuallyMissing = result.missing.filter((f) => {
-                            const val = record.data[f.name];
-                            if (val === false || val === null || val === undefined || val === "") {
-                                return true;
-                            }
-                            if (Array.isArray(val) && val.length === 0) {
-                                return true;
-                            }
-                            if (val && val.length === 0 && typeof val.length === "number") {
-                                return true;
-                            }
-                            return false;
-                        });
-                        if (actuallyMissing.length > 0) {
-                            const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
-                            const missingFieldNames = actuallyMissing.map((f) => f.name);
-                            this.env.services.notification.add(
-                                `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
-                                {
-                                    type: "danger",
-                                    sticky: true,
+            
+            // Check if stage_id is being changed
+            if (currentStageId && record._changes && record._changes.stage_id) {
+                const originalStageId = record._changes.stage_id.originalValue;
+                if (originalStageId && originalStageId !== currentStageId) {
+                    try {
+                        const result = await this.orm.call(
+                            "crm.lead",
+                            "check_required_fields_for_stage",
+                            [record.resId, currentStageId],
+                        );
+                        if (result && result.missing && result.missing.length > 0) {
+                            const actuallyMissing = result.missing.filter((f) => {
+                                const val = record.data[f.name];
+                                if (val === false || val === null || val === undefined || val === "") {
+                                    return true;
                                 }
-                            );
-                            highlightMissingFields(missingFieldNames);
-                            return false;
+                                if (Array.isArray(val) && val.length === 0) {
+                                    return true;
+                                }
+                                if (val && val.length === 0 && typeof val.length === "number") {
+                                    return true;
+                                }
+                                return false;
+                            });
+                            if (actuallyMissing.length > 0) {
+                                const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
+                                const missingFieldNames = actuallyMissing.map((f) => f.name);
+                                
+                                // Revert stage change
+                                record.update({ stage_id: originalStageId });
+                                
+                                // Show notification with button - same as kanban flow
+                                const ormService = this.orm;
+                                const actionService = this.env.services.action;
+                                const notificationService = this.env.services.notification;
+                                const leadResId = record.resId;
+                                
+                                const action = {
+                                    type: "ir.actions.act_window",
+                                    name: "Zorunlu Alanları Doldurun",
+                                    res_model: "crm.lead",
+                                    res_id: leadResId,
+                                    view_mode: "form",
+                                    views: [[false, "form"]],
+                                    target: "new",
+                                    context: {
+                                        default_stage_id: currentStageId,
+                                    },
+                                };
+
+                                const onDialogClose = async () => {
+                                    try {
+                                        const recheck = await ormService.call(
+                                            "crm.lead",
+                                            "check_required_fields_for_stage",
+                                            [leadResId, currentStageId],
+                                        );
+                                        if (!recheck.missing || recheck.missing.length === 0) {
+                                            await ormService.call(
+                                                "crm.lead",
+                                                "move_to_stage",
+                                                [leadResId, currentStageId],
+                                            );
+                                            // Reload the form to show the new stage
+                                            this.model.load();
+                                        }
+                                    } catch (e) {
+                                        console.error("[crm_komtas_ux] Error after dialog close:", e);
+                                    }
+                                };
+
+                                const closeNotification = notificationService.add(
+                                    `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
+                                    {
+                                        type: "danger",
+                                        sticky: true,
+                                        buttons: [
+                                            {
+                                                name: "Alanları Doldur",
+                                                onClick: () => {
+                                                    closeNotification();
+                                                    actionService.doAction(action, {
+                                                        onClose: () => {
+                                                            onDialogClose();
+                                                        },
+                                                    });
+                                                    highlightMissingFields(missingFieldNames);
+                                                },
+                                            },
+                                        ],
+                                    }
+                                );
+                                
+                                return false;
+                            }
                         }
+                    } catch (e) {
+                        console.error("[crm_komtas_ux] Error checking required fields in form:", e);
                     }
-                } catch (e) {
-                    console.error("[crm_komtas_ux] Error checking required fields in form:", e);
                 }
             }
         }
