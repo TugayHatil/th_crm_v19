@@ -15,7 +15,7 @@
                     <group string="Zorunlu Alanlar (Bu Aşamada)">
                         <field name="required_fields"
                                widget="many2many_tags"
-                               domain="[('model_id.model', '=', 'crm.lead'), ('ttype', 'not in', ['one2many', 'many2many', 'binary']), ('store', '=', True)]"
+                               domain="[('model_id.model', '=', 'crm.lead'), ('ttype', 'not in', ['one2many', 'binary']), '|', ('ttype', '=', 'many2many'), ('store', '=', True)]"
                                options="{'no_create': True}"
                                help="Bu aşamaya geçildiğinde doldurulması zorunlu olacak crm.lead alanlarını seçin."/>
                     </group>
