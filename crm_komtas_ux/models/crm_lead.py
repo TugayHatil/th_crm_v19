@@ -62,40 +62,6 @@ class CrmLead(models.Model):
             if not self.stage_id or self.pipeline_id.id not in self.stage_id.pipeline_ids.ids:
                 self.stage_id = self._stage_find(domain=[('fold', '=', False)]).id
 
-    @api.onchange('stage_id')
-    def _onchange_stage_id(self):
-        """Check required fields when stage changes in form view."""
-        if not self.stage_id or self.env.context.get('skip_required_check'):
-            return
-        
-        required_fields = self.stage_id.sudo().required_fields
-        if not required_fields:
-            return
-        
-        missing = []
-        missing_field_names = []
-        for field in required_fields:
-            fname = field.name
-            value = getattr(self, fname, False)
-            if hasattr(value, '_name'):
-                is_empty = not bool(value)
-            else:
-                is_empty = value is False or value is None or (isinstance(value, str) and not value)
-            if is_empty:
-                missing.append(field.field_description)
-                missing_field_names.append(fname)
-        
-        if missing:
-            # Revert stage change and pass missing field names for JavaScript highlighting
-            if self._origin and self._origin.stage_id:
-                self.stage_id = self._origin.stage_id
-            return {
-                'warning': {
-                    'title': 'Zorunlu Alanlar Eksik',
-                    'message': f'Bu aşamaya geçiş için şu alanları doldurmalısınız: {", ".join(missing)}',
-                },
-                'context': {'missing_required_fields': missing_field_names}
-            }
 
     def write(self, vals):
         """Check required fields before changing stage."""

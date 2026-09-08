@@ -89,6 +89,9 @@ patch(FormController.prototype, {
             return;
         }
         
+        // Store original stage to revert if needed
+        const originalStageId = ev.data?.oldValue || record._changes?.stage_id?.originalValue;
+        
         this.orm.call(
             "crm.lead",
             "check_required_fields_for_stage",
@@ -109,9 +112,35 @@ patch(FormController.prototype, {
                     return false;
                 });
                 if (actuallyMissing.length > 0) {
+                    const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
                     const missingFieldNames = actuallyMissing.map((f) => f.name);
-                    // Only highlight fields, don't revert stage (Python onchange handles that)
-                    highlightMissingFields(missingFieldNames);
+                    
+                    // Revert stage change
+                    if (originalStageId && originalStageId !== currentStageId) {
+                        record.update({ stage_id: originalStageId });
+                    }
+                    
+                    // Show notification with button
+                    const notificationService = this.env.services.notification;
+                    const actionService = this.env.services.action;
+                    
+                    const closeNotification = notificationService.add(
+                        `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
+                        {
+                            type: "danger",
+                            sticky: true,
+                            buttons: [
+                                {
+                                    name: "Alanları Doldur",
+                                    onClick: () => {
+                                        closeNotification();
+                                        // Highlight fields in current form
+                                        highlightMissingFields(missingFieldNames);
+                                    },
+                                },
+                            ],
+                        }
+                    );
                 }
             }
         }).catch((e) => {
