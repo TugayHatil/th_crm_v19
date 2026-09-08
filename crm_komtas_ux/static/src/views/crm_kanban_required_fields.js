@@ -64,17 +64,16 @@ function highlightMissingFields(fieldNames) {
 }
 
 patch(FormController.prototype, {
-    async save(params = {}) {
-        const root = this.model.root;
-        if (root.resModel === "crm.lead" && root.resId) {
-            const currentStageVal = root.data.stage_id;
+    async onWillSaveRecord(record) {
+        if (record.resModel === "crm.lead" && record.resId) {
+            const currentStageVal = record.data.stage_id;
             const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
             if (currentStageId) {
                 try {
                     const result = await this.env.services.orm.call(
                         "crm.lead",
                         "check_required_fields_for_stage",
-                        [root.resId, currentStageId],
+                        [record.resId, currentStageId],
                     );
                     if (result && result.missing && result.missing.length > 0) {
                         const fieldLabels = result.missing.map((f) => f.label).join(", ");
@@ -95,7 +94,7 @@ patch(FormController.prototype, {
                 }
             }
         }
-        return super.save(params);
+        return super.onWillSaveRecord(...arguments);
     },
 });
 
