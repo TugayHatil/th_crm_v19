@@ -136,12 +136,12 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                     {
                                         name: "Alanları Doldur",
                                         onClick: () => {
+                                            if (notificationId) {
+                                                notificationService.remove(notificationId);
+                                            }
                                             const missingFieldNames = result.missing.map((f) => f.name);
                                             actionService.doAction(action, {
                                                 onClose: () => {
-                                                    if (notificationId) {
-                                                        notificationService.remove(notificationId);
-                                                    }
                                                     onDialogClose();
                                                 },
                                             });
