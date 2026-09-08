@@ -115,7 +115,7 @@ patch(FormController.prototype, {
                     const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
                     const missingFieldNames = actuallyMissing.map((f) => f.name);
                     
-                    // Revert stage change
+                    // Revert stage change immediately to prevent write from being called
                     if (originalStageId && originalStageId !== currentStageId) {
                         record.update({ stage_id: originalStageId });
                     }
@@ -136,6 +136,7 @@ patch(FormController.prototype, {
                         target: "new",
                         context: {
                             default_stage_id: currentStageId,
+                            from_form_view: true,
                         },
                     };
 

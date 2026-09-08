@@ -65,7 +65,8 @@ class CrmLead(models.Model):
 
     def write(self, vals):
         """Check required fields before changing stage."""
-        if 'stage_id' in vals and not self.env.context.get('skip_required_check'):
+        # Skip Python check for form view (JavaScript handles it)
+        if 'stage_id' in vals and not self.env.context.get('skip_required_check') and not self.env.context.get('from_form_view'):
             target_stage_id = vals['stage_id']
             if isinstance(target_stage_id, (list, tuple)):
                 target_stage_id = target_stage_id[0] if target_stage_id else False
