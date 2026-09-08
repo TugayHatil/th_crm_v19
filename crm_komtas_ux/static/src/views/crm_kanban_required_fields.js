@@ -69,8 +69,7 @@ patch(FormController.prototype, {
         if (root.resModel === "crm.lead" && root.resId) {
             const currentStageVal = root.data.stage_id;
             const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
-            const changes = root.changes || root._changes || {};
-            if ('stage_id' in changes && currentStageId) {
+            if (currentStageId) {
                 try {
                     const result = await this.env.services.orm.call(
                         "crm.lead",
