@@ -63,9 +63,8 @@ class CrmLead(models.Model):
                 self.stage_id = self._stage_find(domain=[('fold', '=', False)]).id
 
     def write(self, vals):
-        """Check required fields before changing stage, but skip if from JS check."""
-        # Skip check if this is a revert from JavaScript stage check
-        if 'stage_id' in vals and not self.env.context.get('skip_required_check') and not self.env.context.get('js_stage_revert'):
+        """Check required fields before changing stage."""
+        if 'stage_id' in vals and not self.env.context.get('skip_required_check'):
             target_stage_id = vals['stage_id']
             if isinstance(target_stage_id, (list, tuple)):
                 target_stage_id = target_stage_id[0] if target_stage_id else False
@@ -91,20 +90,6 @@ class CrmLead(models.Model):
                             )
         
         return super().write(vals)
-
-    def action_change_stage(self):
-        """Open wizard to change stage with validation."""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Aşama Değiştir',
-            'res_model': 'crm.lead.stage.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_lead_id': self.id,
-                'default_current_stage_id': self.stage_id.id,
-            },
-        }
     @api.model_create_multi
     def create(self, vals_list):
         """Set default stage for new leads."""
