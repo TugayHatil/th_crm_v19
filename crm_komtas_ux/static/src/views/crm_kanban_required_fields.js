@@ -120,10 +120,46 @@ patch(FormController.prototype, {
                         record.update({ stage_id: originalStageId });
                     }
                     
-                    // Show notification with button
-                    const notificationService = this.env.services.notification;
+                    // Show notification with button - same as kanban flow
+                    const ormService = this.orm;
                     const actionService = this.env.services.action;
+                    const notificationService = this.env.services.notification;
+                    const leadResId = record.resId;
                     
+                    const action = {
+                        type: "ir.actions.act_window",
+                        name: "Zorunlu Alanları Doldurun",
+                        res_model: "crm.lead",
+                        res_id: leadResId,
+                        view_mode: "form",
+                        views: [[false, "form"]],
+                        target: "new",
+                        context: {
+                            default_stage_id: currentStageId,
+                        },
+                    };
+
+                    const onDialogClose = async () => {
+                        try {
+                            const recheck = await ormService.call(
+                                "crm.lead",
+                                "check_required_fields_for_stage",
+                                [leadResId, currentStageId],
+                            );
+                            if (!recheck.missing || recheck.missing.length === 0) {
+                                await ormService.call(
+                                    "crm.lead",
+                                    "move_to_stage",
+                                    [leadResId, currentStageId],
+                                );
+                                // Reload the form to show the new stage
+                                this.model.load();
+                            }
+                        } catch (e) {
+                            console.error("[crm_komtas_ux] Error after dialog close:", e);
+                        }
+                    };
+
                     const closeNotification = notificationService.add(
                         `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
                         {
@@ -134,7 +170,11 @@ patch(FormController.prototype, {
                                     name: "Alanları Doldur",
                                     onClick: () => {
                                         closeNotification();
-                                        // Highlight fields in current form
+                                        actionService.doAction(action, {
+                                            onClose: () => {
+                                                onDialogClose();
+                                            },
+                                        });
                                         highlightMissingFields(missingFieldNames);
                                     },
                                 },
