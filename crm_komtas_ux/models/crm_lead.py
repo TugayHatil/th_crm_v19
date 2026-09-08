@@ -166,8 +166,10 @@ class CrmLead(models.Model):
             fname = field.name
             value = getattr(lead, fname, False)
             if hasattr(value, '_name'):
-                value = value.id if value else False
-            if value is False or value is None or (isinstance(value, str) and not value):
+                is_empty = not bool(value)
+            else:
+                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+            if is_empty:
                 missing.append({
                     'name': fname,
                     'label': field.field_description,
@@ -177,13 +179,11 @@ class CrmLead(models.Model):
         return {'missing': missing}
 
     @api.model
-    def apply_required_fields_and_stage(self, lead_id, target_stage_id, field_values):
-        """Write field values and move lead to target stage."""
+    def move_to_stage(self, lead_id, target_stage_id):
+        """Move lead to target stage (field values should already be saved)."""
         lead = self.browse(lead_id).exists()
         if not lead:
             return False
-        if field_values:
-            lead.write(field_values)
         lead.write({'stage_id': target_stage_id})
         return True
 
@@ -205,8 +205,10 @@ class CrmLead(models.Model):
                 fname = field.name
                 value = getattr(lead, fname, False)
                 if hasattr(value, '_name'):
-                    value = value.id if value else False
-                if value is False or value is None or (isinstance(value, str) and not value):
+                    is_empty = not bool(value)
+                else:
+                    is_empty = value is False or value is None or (isinstance(value, str) and not value)
+                if is_empty:
                     missing_labels.append(field.field_description)
             if missing_labels:
                 raise ValidationError(

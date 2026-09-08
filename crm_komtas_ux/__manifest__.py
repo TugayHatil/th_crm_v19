@@ -17,7 +17,6 @@
         'views/informatica_pipeline_views.xml',
         'views/hyperscalers_views.xml',
         'views/criterias_views.xml',
-        'views/stage_required_wizard_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
