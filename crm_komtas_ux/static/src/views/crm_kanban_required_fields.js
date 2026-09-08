@@ -70,7 +70,7 @@ patch(FormController.prototype, {
             const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
             if (currentStageId) {
                 try {
-                    const result = await this.env.services.orm.call(
+                    const result = await this.orm.call(
                         "crm.lead",
                         "check_required_fields_for_stage",
                         [record.resId, currentStageId],
@@ -92,8 +92,7 @@ patch(FormController.prototype, {
                         if (actuallyMissing.length > 0) {
                             const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
                             const missingFieldNames = actuallyMissing.map((f) => f.name);
-                            const notificationService = this.env.services.notification;
-                            notificationService.add(
+                            this.env.services.notification.add(
                                 `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
                                 {
                                     type: "danger",
