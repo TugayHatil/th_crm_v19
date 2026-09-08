@@ -66,15 +66,16 @@ function highlightMissingFields(fieldNames) {
 patch(FormController.prototype, {
     async save(params = {}) {
         const root = this.model.root;
-        if (root.resModel === "crm.lead" && root.changes && 'stage_id' in root.changes) {
-            const stageChange = root.changes.stage_id;
-            const newStageId = Array.isArray(stageChange) ? stageChange[0] : stageChange;
-            if (newStageId && root.resId) {
+        if (root.resModel === "crm.lead" && root.resId) {
+            const currentStageVal = root.data.stage_id;
+            const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
+            const changes = root.changes || root._changes || {};
+            if ('stage_id' in changes && currentStageId) {
                 try {
                     const result = await this.env.services.orm.call(
                         "crm.lead",
                         "check_required_fields_for_stage",
-                        [root.resId, newStageId],
+                        [root.resId, currentStageId],
                     );
                     if (result && result.missing && result.missing.length > 0) {
                         const fieldLabels = result.missing.map((f) => f.label).join(", ");
