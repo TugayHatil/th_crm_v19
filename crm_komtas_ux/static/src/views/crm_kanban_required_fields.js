@@ -3,6 +3,8 @@
 import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
 import { FormController } from "@web/views/form/form_controller";
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
 
 function highlightMissingFields(fieldNames) {
     const styleId = "o_required_highlight_style";
@@ -64,6 +66,65 @@ function highlightMissingFields(fieldNames) {
 }
 
 patch(FormController.prototype, {
+    setup() {
+        super.setup(...arguments);
+        if (this.props.resModel === "crm.lead") {
+            this._stageChangeHandler = this._onStageChange.bind(this);
+        }
+    },
+    async loadRecord(params) {
+        await super.loadRecord(...arguments);
+        if (this.props.resModel === "crm.lead" && this.model.root) {
+            this.model.root.on("change:stage_id", this._stageChangeHandler);
+        }
+    },
+    _onStageChange(ev) {
+        const record = ev.target;
+        if (!record || !record.resId) {
+            return;
+        }
+        const currentStageVal = record.data.stage_id;
+        const currentStageId = Array.isArray(currentStageVal) ? currentStageVal[0] : currentStageVal;
+        if (!currentStageId) {
+            return;
+        }
+        
+        this.orm.call(
+            "crm.lead",
+            "check_required_fields_for_stage",
+            [record.resId, currentStageId],
+        ).then((result) => {
+            if (result && result.missing && result.missing.length > 0) {
+                const actuallyMissing = result.missing.filter((f) => {
+                    const val = record.data[f.name];
+                    if (val === false || val === null || val === undefined || val === "") {
+                        return true;
+                    }
+                    if (Array.isArray(val) && val.length === 0) {
+                        return true;
+                    }
+                    if (val && val.length === 0 && typeof val.length === "number") {
+                        return true;
+                    }
+                    return false;
+                });
+                if (actuallyMissing.length > 0) {
+                    const fieldLabels = actuallyMissing.map((f) => f.label).join(", ");
+                    const missingFieldNames = actuallyMissing.map((f) => f.name);
+                    this.env.services.notification.add(
+                        `Bu aşamaya geçiş için şu zorunlu alanları doldurun: ${fieldLabels}`,
+                        {
+                            type: "danger",
+                            sticky: true,
+                        }
+                    );
+                    highlightMissingFields(missingFieldNames);
+                }
+            }
+        }).catch((e) => {
+            console.error("[crm_komtas_ux] Error checking required fields on stage change:", e);
+        });
+    },
     async onWillSaveRecord(record) {
         if (record.resModel === "crm.lead" && record.resId) {
             const currentStageVal = record.data.stage_id;

@@ -47,7 +47,6 @@ class CrmLead(models.Model):
         string='Stage',
         index=True,
         tracking=True,
-        compute='_compute_stage_id',
         readonly=False,
         store=True,
         copy=False,
@@ -56,13 +55,87 @@ class CrmLead(models.Model):
         domain="['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]"
     )
 
-    @api.depends('pipeline_id')
-    def _compute_stage_id(self):
-        for lead in self:
-            if not lead.stage_id:
-                lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
-            elif lead.pipeline_id and lead.pipeline_id.id not in lead.stage_id.pipeline_ids.ids:
-                lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
+    @api.onchange('pipeline_id')
+    def _onchange_pipeline_id(self):
+        """Update stage when pipeline changes."""
+        if self.pipeline_id:
+            if not self.stage_id or self.pipeline_id.id not in self.stage_id.pipeline_ids.ids:
+                self.stage_id = self._stage_find(domain=[('fold', '=', False)]).id
+
+    @api.onchange('stage_id')
+    def _onchange_stage_id(self):
+        """Check required fields when stage changes in form view."""
+        if not self.stage_id or self.env.context.get('skip_required_check'):
+            return
+        
+        required_fields = self.stage_id.sudo().required_fields
+        if not required_fields:
+            return
+        
+        missing = []
+        for field in required_fields:
+            fname = field.name
+            value = getattr(self, fname, False)
+            if hasattr(value, '_name'):
+                is_empty = not bool(value)
+            else:
+                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+            if is_empty:
+                missing.append(field.field_description)
+        
+        if missing:
+            # Revert stage change by getting the original value
+            if self._origin and self._origin.stage_id:
+                self.stage_id = self._origin.stage_id
+            return {
+                'warning': {
+                    'title': 'Zorunlu Alanlar Eksik',
+                    'message': f'Bu aşamaya geçiş için şu alanları doldurmalısınız: {", ".join(missing)}',
+                }
+            }
+
+    def write(self, vals):
+        """Check required fields before changing stage."""
+        if 'stage_id' in vals and not self.env.context.get('skip_required_check'):
+            target_stage_id = vals['stage_id']
+            if isinstance(target_stage_id, (list, tuple)):
+                target_stage_id = target_stage_id[0] if target_stage_id else False
+            
+            if target_stage_id:
+                target_stage = self.env['crm.stage'].browse(target_stage_id).exists()
+                if target_stage and target_stage.required_fields:
+                    for lead in self:
+                        missing = []
+                        for field in target_stage.sudo().required_fields:
+                            fname = field.name
+                            value = getattr(lead, fname, False)
+                            if hasattr(value, '_name'):
+                                is_empty = not bool(value)
+                            else:
+                                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+                            if is_empty:
+                                missing.append(field.field_description)
+                        
+                        if missing:
+                            raise ValidationError(
+                                f'Bu aşamaya geçiş için şu zorunlu alanları doldurmalısınız: {", ".join(missing)}'
+                            )
+        
+        return super().write(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Set default stage for new leads."""
+        for vals in vals_list:
+            if not vals.get('stage_id'):
+                pipeline_id = vals.get('pipeline_id')
+                if pipeline_id:
+                    stage = self._stage_find(pipeline_id=pipeline_id, domain=[('fold', '=', False)])
+                else:
+                    stage = self._stage_find(domain=[('fold', '=', False)])
+                if stage:
+                    vals['stage_id'] = stage.id
+        return super().create(vals_list)
 
     def _stage_find(self, pipeline_id=False, domain=None, order='sequence, id', limit=1):
         if pipeline_id:
