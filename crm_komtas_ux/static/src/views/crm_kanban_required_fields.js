@@ -10,27 +10,10 @@ function highlightMissingFields(fieldNames) {
         const style = document.createElement("style");
         style.id = styleId;
         style.textContent = `
-            .o_required_highlight,
-            .o_required_highlight .o_input,
-            .o_required_highlight input,
-            .o_required_highlight textarea,
-            .o_required_highlight select,
-            .o_required_highlight .o_field_many2one_selection,
-            .o_required_highlight .o_field_many2many_selection,
-            .o_required_highlight .o_field_many2many_tags,
-            .o_required_highlight .o_field_tags,
-            .o_required_highlight .o_input_dropdown,
-            .o_required_highlight .o_dropdown_toggler,
-            .o_required_highlight .o-autocomplete--input {
-                background-color: #fff5f5 !important;
-                border-color: #dc3545 !important;
-                border-width: 1px !important;
-                border-style: solid !important;
-            }
             .o_required_highlight {
-                outline: 2px solid #dc3545 !important;
-                outline-offset: 2px !important;
-                border-radius: 4px !important;
+                border-radius: 4px;
+                background-color: #fff5f5 !important;
+                padding: 4px;
             }
             .o_required_highlight_label {
                 color: #dc3545 !important;
@@ -46,55 +29,38 @@ function highlightMissingFields(fieldNames) {
     }
 
     const applyHighlight = () => {
-        // Find form views, prefer those inside open dialogs
-        const allForms = [...document.querySelectorAll(".o_form_view")];
-        const dialogForms = allForms.filter((f) => f.closest(".o_dialog, .modal, .o_technical_modal"));
-        const forms = dialogForms.length > 0 ? dialogForms : allForms;
-
-        if (forms.length === 0) {
+        const modal = document.querySelector(".o_dialog:not(.o_modal_closed) .o_form_view") ||
+                      document.querySelector(".modal-body .o_form_view") ||
+                      document.querySelector(".o_form_view");
+        if (!modal) {
             return false;
         }
-
-        let totalFound = 0;
-        for (const form of forms) {
-            for (const fieldName of fieldNames) {
-                const fieldEl =
-                    form.querySelector(`[name="${fieldName}"]`) ||
-                    form.querySelector(`[field-name="${fieldName}"]`) ||
-                    form.querySelector(`[data-field-name="${fieldName}"]`) ||
-                    form.querySelector(`.o_field_widget[name="${fieldName}"]`);
-                if (fieldEl) {
-                    const container =
-                        fieldEl.closest(".o_field_widget") ||
-                        fieldEl.closest(".o_cell") ||
-                        fieldEl;
-                    container.classList.add("o_required_highlight");
-                    totalFound++;
-                }
-
-                const labelEl =
-                    form.querySelector(`label[for="${fieldName}"]`) ||
-                    form.querySelector(`label.o_form_label[for="${fieldName}"]`);
+        let found = 0;
+        for (const fieldName of fieldNames) {
+            const fieldEl = modal.querySelector(`[name="${fieldName}"]`);
+            if (fieldEl) {
+                const container = fieldEl.closest(".o_field_widget") || fieldEl;
+                container.classList.add("o_required_highlight");
+                const labelEl = modal.querySelector(`label[for="${fieldName}"]`);
                 if (labelEl) {
                     labelEl.classList.add("o_required_highlight_label");
                 }
+                found++;
             }
         }
-        console.log("[crm_komtas_ux] highlightMissingFields found", totalFound, "of", fieldNames.length, "fields");
-        return totalFound > 0;
+        return found > 0;
     };
 
     let attempts = 0;
-    const maxAttempts = 30;
+    const maxAttempts = 10;
     const tryHighlight = () => {
         attempts++;
-        const found = applyHighlight();
-        if (found || attempts >= maxAttempts) {
+        if (applyHighlight() || attempts >= maxAttempts) {
             return;
         }
-        setTimeout(tryHighlight, 300);
+        setTimeout(tryHighlight, 200);
     };
-    setTimeout(tryHighlight, 500);
+    setTimeout(tryHighlight, 300);
 }
 
 patch(StatusBarField.prototype, {
@@ -193,7 +159,7 @@ patch(StatusBarField.prototype, {
                                 }
                             );
 
-                            // Highlight missing fields in the main form immediately
+                            // Highlight the missing fields in the form immediately
                             highlightMissingFields(missingFieldNames);
                             
                             // Don't call super - prevent stage change
@@ -298,9 +264,6 @@ patch(CrmKanbanDynamicGroupList.prototype, {
                                 ],
                             }
                         );
-
-                        // Highlight missing fields in the main form immediately
-                        highlightMissingFields(missingFieldNames);
                         return;
                     }
                 } catch (e) {
