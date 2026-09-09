@@ -60,7 +60,16 @@ class CrmLead(models.Model):
         """Update stage when pipeline changes."""
         if self.pipeline_id:
             if not self.stage_id or self.pipeline_id.id not in self.stage_id.pipeline_ids.ids:
-                self.stage_id = self._stage_find(domain=[('fold', '=', False)]).id
+                self.stage_id = self.with_context(
+                    default_pipeline_id=self.pipeline_id.id
+                )._stage_find(domain=[('fold', '=', False)]).id
+
+    def _is_field_empty(self, lead, fname):
+        """Check if a field value is empty on the given lead record."""
+        value = getattr(lead, fname, False)
+        if hasattr(value, '_name'):
+            return not bool(value)
+        return value is False or value is None or (isinstance(value, str) and not value)
 
     def write(self, vals):
         """Check required fields before changing stage."""
@@ -71,16 +80,23 @@ class CrmLead(models.Model):
             
             if target_stage_id:
                 target_stage = self.env['crm.stage'].browse(target_stage_id).exists()
-                if target_stage and target_stage.required_fields:
+                required_fields = target_stage.sudo().required_fields
+                if target_stage and required_fields:
                     for lead in self:
                         missing = []
-                        for field in target_stage.sudo().required_fields:
+                        for field in required_fields:
                             fname = field.name
-                            value = getattr(lead, fname, False)
-                            if hasattr(value, '_name'):
-                                is_empty = not bool(value)
+                            if fname in vals:
+                                raw_val = vals[fname]
+                                field_meta = self._fields.get(fname)
+                                if field_meta and field_meta.type in ('many2one', 'many2many', 'one2many'):
+                                    is_empty = not raw_val
+                                elif field_meta and field_meta.type == 'boolean':
+                                    is_empty = raw_val is False
+                                else:
+                                    is_empty = raw_val is False or raw_val is None or (isinstance(raw_val, str) and not raw_val)
                             else:
-                                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+                                is_empty = self._is_field_empty(lead, fname)
                             if is_empty:
                                 missing.append(field.field_description)
                         
@@ -97,14 +113,19 @@ class CrmLead(models.Model):
             if not vals.get('stage_id'):
                 pipeline_id = vals.get('pipeline_id')
                 if pipeline_id:
-                    stage = self._stage_find(pipeline_id=pipeline_id, domain=[('fold', '=', False)])
+                    stage = self.with_context(
+                        default_pipeline_id=pipeline_id
+                    )._stage_find(domain=[('fold', '=', False)])
                 else:
                     stage = self._stage_find(domain=[('fold', '=', False)])
                 if stage:
                     vals['stage_id'] = stage.id
         return super().create(vals_list)
 
-    def _stage_find(self, pipeline_id=False, domain=None, order='sequence, id', limit=1):
+    def _stage_find(self, domain=None, order=None, limit=1):
+        pipeline_id = self.env.context.get('default_pipeline_id')
+        if not pipeline_id and self.ids:
+            pipeline_id = self.pipeline_id.id
         if pipeline_id:
             search_domain = ['|', ('pipeline_ids', '=', False), ('pipeline_ids', '=', pipeline_id)]
         else:
@@ -204,11 +225,7 @@ class CrmLead(models.Model):
         missing = []
         for field in required_fields:
             fname = field.name
-            value = getattr(lead, fname, False)
-            if hasattr(value, '_name'):
-                is_empty = not bool(value)
-            else:
-                is_empty = value is False or value is None or (isinstance(value, str) and not value)
+            is_empty = self._is_field_empty(lead, fname)
             if is_empty:
                 missing.append({
                     'name': fname,
