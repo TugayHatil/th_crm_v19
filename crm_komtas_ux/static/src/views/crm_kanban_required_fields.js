@@ -58,15 +58,29 @@ function highlightMissingFields(fieldNames) {
         if (applyHighlight() || attempts >= maxAttempts) {
             return;
         }
-        setTimeout(tryHighlight, 200);
+        setTimeout(tryHighlight, 100);
     };
-    setTimeout(tryHighlight, 300);
+    setTimeout(tryHighlight, 50);
 }
 
-async function promptRequiredFields(ormService, actionService, notificationService, leadResId, targetStageId, targetStageName, model, missingFields) {
+async function promptRequiredFields(ormService, actionService, notificationService, leadResId, targetStageId, targetStageName, model, missingFields, isFormView = false) {
     const fieldLabels = missingFields.map((f) => f.label).join(", ");
     const missingFieldNames = missingFields.map((f) => f.name);
 
+    if (isFormView) {
+        // Form view: just highlight fields on the current form, no popup dialog
+        highlightMissingFields(missingFieldNames);
+        notificationService.add(
+            `Bu fırsatı "${targetStageName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldLabels}`,
+            {
+                type: "danger",
+                sticky: true,
+            }
+        );
+        return;
+    }
+
+    // Kanban view: open dialog to fill missing fields
     const action = {
         type: "ir.actions.act_window",
         name: "Zorunlu Alanları Doldurun",
@@ -153,6 +167,7 @@ patch(StatusBarField.prototype, {
                             targetStageName,
                             record.model,
                             result.missing,
+                            true, // isFormView
                         );
                         // Don't call super - prevent stage change
                         return;
