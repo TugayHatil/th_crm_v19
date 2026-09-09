@@ -130,8 +130,8 @@ patch(StatusBarField.prototype, {
         // Only intercept for crm.lead stage_id field
         if (this.props.record.resModel === "crm.lead" && this.props.name === "stage_id") {
             const record = this.props.record;
-            const targetStageId = item.id;
-            const targetStageName = item.name || item.label || "Hedef";
+            const targetStageId = item.value;
+            const targetStageName = item.label || "Hedef";
 
             if (targetStageId && record.resId) {
                 try {
@@ -144,34 +144,18 @@ patch(StatusBarField.prototype, {
                     );
 
                     if (result && result.missing && result.missing.length > 0) {
-                        const actuallyMissing = result.missing.filter((f) => {
-                            const val = record.data[f.name];
-                            if (val === false || val === null || val === undefined || val === "") {
-                                return true;
-                            }
-                            if (Array.isArray(val) && val.length === 0) {
-                                return true;
-                            }
-                            if (val && val.length === 0 && typeof val.length === "number") {
-                                return true;
-                            }
-                            return false;
-                        });
-
-                        if (actuallyMissing.length > 0) {
-                            await promptRequiredFields(
-                                ormService,
-                                services.action,
-                                services.notification,
-                                record.resId,
-                                targetStageId,
-                                targetStageName,
-                                record.model,
-                                actuallyMissing,
-                            );
-                            // Don't call super - prevent stage change
-                            return;
-                        }
+                        await promptRequiredFields(
+                            ormService,
+                            services.action,
+                            services.notification,
+                            record.resId,
+                            targetStageId,
+                            targetStageName,
+                            record.model,
+                            result.missing,
+                        );
+                        // Don't call super - prevent stage change
+                        return;
                     }
                 } catch (e) {
                     console.error("[crm_komtas_ux] Error checking required fields on stage select:", e);
