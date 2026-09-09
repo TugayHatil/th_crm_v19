@@ -99,7 +99,7 @@ async function promptRequiredFields(ormService, actionService, notificationServi
         return;
     }
 
-    // Kanban view: open dialog to fill missing fields
+    // Kanban view: show notification with button to open dialog
     const action = {
         type: "ir.actions.act_window",
         name: "Zorunlu Alanları Doldurun",
@@ -113,28 +113,6 @@ async function promptRequiredFields(ormService, actionService, notificationServi
         },
     };
 
-    const onDialogClose = async () => {
-        try {
-            const recheck = await ormService.call(
-                "crm.lead",
-                "check_required_fields_for_stage",
-                [leadResId, targetStageId],
-            );
-            if (!recheck.missing || recheck.missing.length === 0) {
-                await ormService.call(
-                    "crm.lead",
-                    "move_to_stage",
-                    [leadResId, targetStageId],
-                );
-            }
-        } catch (e) {
-            console.error("[crm_komtas_ux] Error after dialog close:", e);
-        }
-        if (model && model.load) {
-            await model.load();
-        }
-    };
-
     const closeNotification = notificationService.add(
         `Bu fırsatı "${targetStageName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldLabels}`,
         {
@@ -145,11 +123,16 @@ async function promptRequiredFields(ormService, actionService, notificationServi
                     name: "Alanları Doldur",
                     onClick: () => {
                         closeNotification();
-                        actionService.doAction(action, {
-                            onClose: () => {
-                                onDialogClose();
-                            },
-                        });
+                        pendingStageChange = {
+                            ormService,
+                            notificationService,
+                            leadResId,
+                            targetStageId,
+                            targetStageName,
+                            model,
+                            closeNotification: () => {},
+                        };
+                        actionService.doAction(action);
                         highlightMissingFields(missingFieldNames);
                     },
                 },
@@ -207,9 +190,88 @@ patch(StatusBarField.prototype, {
 });
 
 patch(FormController.prototype, {
+    async beforeExecuteActionButton(clickParams) {
+        const isCrmLeadDialog =
+            pendingStageChange &&
+            this.model.root.resModel === "crm.lead" &&
+            this.model.root.resId === pendingStageChange.leadResId &&
+            this.env.inDialog;
+
+        if (isCrmLeadDialog && clickParams.special === "cancel") {
+            pendingStageChange = null;
+            clearHighlight();
+            return await super.beforeExecuteActionButton(clickParams);
+        }
+
+        if (isCrmLeadDialog && clickParams.special !== "cancel") {
+            const record = this.model.root;
+            let saved = false;
+            if (clickParams.special === "save" && this.props.saveRecord) {
+                saved = await this.props.saveRecord(record, clickParams);
+            } else {
+                const params = { reload: !(this.env.inDialog && clickParams.close) };
+                saved = await record.save(params);
+            }
+            if (saved === false) {
+                return saved;
+            }
+
+            const psc = pendingStageChange;
+            try {
+                const recheck = await psc.ormService.call(
+                    "crm.lead",
+                    "check_required_fields_for_stage",
+                    [psc.leadResId, psc.targetStageId],
+                );
+                if (!recheck.missing || recheck.missing.length === 0) {
+                    pendingStageChange = null;
+                    clearHighlight();
+                    await psc.ormService.call(
+                        "crm.lead",
+                        "move_to_stage",
+                        [psc.leadResId, psc.targetStageId],
+                    );
+                    psc.closeNotification();
+                    if (this.props.onSave) {
+                        this.props.onSave(record, clickParams);
+                    }
+                    if (psc.model && psc.model.load) {
+                        await psc.model.load();
+                    }
+                } else {
+                    clearHighlight();
+                    const stillLabels = recheck.missing.map((f) => f.label).join(", ");
+                    const stillNames = recheck.missing.map((f) => f.name);
+                    highlightMissingFields(stillNames);
+                    psc.closeNotification();
+                    const closeNew = psc.notificationService.add(
+                        `Hâlâ eksik alanlar var: ${stillLabels}`,
+                        { type: "danger", sticky: true }
+                    );
+                    pendingStageChange = { ...psc, closeNotification: closeNew };
+                }
+            } catch (e) {
+                console.error("[crm_komtas_ux] Error on dialog save recheck:", e);
+                pendingStageChange = null;
+                clearHighlight();
+                if (this.props.onSave) {
+                    this.props.onSave(record, clickParams);
+                }
+            }
+            return saved;
+        }
+
+        return await super.beforeExecuteActionButton(clickParams);
+    },
+
     async onRecordSaved(record, changes) {
         await super.onRecordSaved(...arguments);
-        if (pendingStageChange && record.resModel === "crm.lead" && record.resId === pendingStageChange.leadResId) {
+        if (
+            pendingStageChange &&
+            !this.env.inDialog &&
+            record.resModel === "crm.lead" &&
+            record.resId === pendingStageChange.leadResId
+        ) {
             const psc = pendingStageChange;
             pendingStageChange = null;
             try {
@@ -230,7 +292,6 @@ patch(FormController.prototype, {
                         await psc.model.load();
                     }
                 } else {
-                    // Still missing - update highlight and notification
                     psc.closeNotification();
                     clearHighlight();
                     const stillLabels = recheck.missing.map((f) => f.label).join(", ");
