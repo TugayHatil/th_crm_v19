@@ -3,6 +3,9 @@
 import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
 import { StatusBarField } from "@web/views/fields/statusbar/statusbar_field";
+import { FormController } from "@web/views/form/form_controller";
+
+let pendingStageChange = null;
 
 function clearHighlight() {
     document.querySelectorAll(".o_required_highlight").forEach((el) => {
@@ -78,53 +81,21 @@ async function promptRequiredFields(ormService, actionService, notificationServi
 
     if (isFormView) {
         // Form view: highlight fields on the current form, no popup dialog
+        // Store pending stage change for auto-retry on form save
         highlightMissingFields(missingFieldNames);
         const closeNotification = notificationService.add(
             `Bu fırsatı "${targetStageName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldLabels}`,
-            {
-                type: "danger",
-                sticky: true,
-                buttons: [
-                    {
-                        name: "Tekrar Dene",
-                        onClick: async () => {
-                            try {
-                                const recheck = await ormService.call(
-                                    "crm.lead",
-                                    "check_required_fields_for_stage",
-                                    [leadResId, targetStageId],
-                                );
-                                if (!recheck.missing || recheck.missing.length === 0) {
-                                    await ormService.call(
-                                        "crm.lead",
-                                        "move_to_stage",
-                                        [leadResId, targetStageId],
-                                    );
-                                    closeNotification();
-                                    clearHighlight();
-                                    if (model && model.load) {
-                                        await model.load();
-                                    }
-                                } else {
-                                    // Still missing - update notification
-                                    closeNotification();
-                                    const stillLabels = recheck.missing.map((f) => f.label).join(", ");
-                                    const stillNames = recheck.missing.map((f) => f.name);
-                                    clearHighlight();
-                                    highlightMissingFields(stillNames);
-                                    notificationService.add(
-                                        `Hâlâ eksik alanlar var: ${stillLabels}`,
-                                        { type: "danger", sticky: true }
-                                    );
-                                }
-                            } catch (e) {
-                                console.error("[crm_komtas_ux] Error on retry:", e);
-                            }
-                        },
-                    },
-                ],
-            }
+            { type: "danger", sticky: true }
         );
+        pendingStageChange = {
+            ormService,
+            notificationService,
+            leadResId,
+            targetStageId,
+            targetStageName,
+            model,
+            closeNotification,
+        };
         return;
     }
 
@@ -232,6 +203,49 @@ patch(StatusBarField.prototype, {
 
         // All checks passed, proceed with stage change
         await super.selectItem(...arguments);
+    },
+});
+
+patch(FormController.prototype, {
+    async onRecordSaved(record, changes) {
+        await super.onRecordSaved(...arguments);
+        if (pendingStageChange && record.resModel === "crm.lead" && record.resId === pendingStageChange.leadResId) {
+            const psc = pendingStageChange;
+            pendingStageChange = null;
+            try {
+                const recheck = await psc.ormService.call(
+                    "crm.lead",
+                    "check_required_fields_for_stage",
+                    [psc.leadResId, psc.targetStageId],
+                );
+                if (!recheck.missing || recheck.missing.length === 0) {
+                    await psc.ormService.call(
+                        "crm.lead",
+                        "move_to_stage",
+                        [psc.leadResId, psc.targetStageId],
+                    );
+                    psc.closeNotification();
+                    clearHighlight();
+                    if (psc.model && psc.model.load) {
+                        await psc.model.load();
+                    }
+                } else {
+                    // Still missing - update highlight and notification
+                    psc.closeNotification();
+                    clearHighlight();
+                    const stillLabels = recheck.missing.map((f) => f.label).join(", ");
+                    const stillNames = recheck.missing.map((f) => f.name);
+                    highlightMissingFields(stillNames);
+                    const closeNew = psc.notificationService.add(
+                        `Hâlâ eksik alanlar var: ${stillLabels}`,
+                        { type: "danger", sticky: true }
+                    );
+                    pendingStageChange = { ...psc, closeNotification: closeNew };
+                }
+            } catch (e) {
+                console.error("[crm_komtas_ux] Error on auto-retry after save:", e);
+            }
+        }
     },
 });
 
