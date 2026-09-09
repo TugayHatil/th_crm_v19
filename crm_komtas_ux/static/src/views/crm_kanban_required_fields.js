@@ -135,7 +135,9 @@ patch(StatusBarField.prototype, {
 
             if (targetStageId && record.resId) {
                 try {
-                    const result = await this.env.services.orm.call(
+                    const ormService = record.model.orm;
+                    const services = record.model.env.services;
+                    const result = await ormService.call(
                         "crm.lead",
                         "check_required_fields_for_stage",
                         [record.resId, targetStageId],
@@ -158,9 +160,9 @@ patch(StatusBarField.prototype, {
 
                         if (actuallyMissing.length > 0) {
                             await promptRequiredFields(
-                                this.env.services.orm,
-                                this.env.services.action,
-                                this.env.services.notification,
+                                ormService,
+                                services.action,
+                                services.notification,
                                 record.resId,
                                 targetStageId,
                                 targetStageName,
@@ -173,6 +175,8 @@ patch(StatusBarField.prototype, {
                     }
                 } catch (e) {
                     console.error("[crm_komtas_ux] Error checking required fields on stage select:", e);
+                    // Prevent stage change on error as well
+                    return;
                 }
             }
         }
