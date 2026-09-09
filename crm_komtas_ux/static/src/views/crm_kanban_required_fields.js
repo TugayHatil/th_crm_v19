@@ -4,6 +4,15 @@ import { patch } from "@web/core/utils/patch";
 import { CrmKanbanDynamicGroupList } from "@crm/views/crm_kanban/crm_kanban_model";
 import { StatusBarField } from "@web/views/fields/statusbar/statusbar_field";
 
+function clearHighlight() {
+    document.querySelectorAll(".o_required_highlight").forEach((el) => {
+        el.classList.remove("o_required_highlight");
+    });
+    document.querySelectorAll(".o_required_highlight_label").forEach((el) => {
+        el.classList.remove("o_required_highlight_label");
+    });
+}
+
 function highlightMissingFields(fieldNames) {
     const styleId = "o_required_highlight_style";
     if (!document.getElementById(styleId)) {
@@ -68,13 +77,52 @@ async function promptRequiredFields(ormService, actionService, notificationServi
     const missingFieldNames = missingFields.map((f) => f.name);
 
     if (isFormView) {
-        // Form view: just highlight fields on the current form, no popup dialog
+        // Form view: highlight fields on the current form, no popup dialog
         highlightMissingFields(missingFieldNames);
-        notificationService.add(
+        const closeNotification = notificationService.add(
             `Bu fırsatı "${targetStageName}" aşamasına taşımak için şu zorunlu alanları doldurun: ${fieldLabels}`,
             {
                 type: "danger",
                 sticky: true,
+                buttons: [
+                    {
+                        name: "Tekrar Dene",
+                        onClick: async () => {
+                            try {
+                                const recheck = await ormService.call(
+                                    "crm.lead",
+                                    "check_required_fields_for_stage",
+                                    [leadResId, targetStageId],
+                                );
+                                if (!recheck.missing || recheck.missing.length === 0) {
+                                    await ormService.call(
+                                        "crm.lead",
+                                        "move_to_stage",
+                                        [leadResId, targetStageId],
+                                    );
+                                    closeNotification();
+                                    clearHighlight();
+                                    if (model && model.load) {
+                                        await model.load();
+                                    }
+                                } else {
+                                    // Still missing - update notification
+                                    closeNotification();
+                                    const stillLabels = recheck.missing.map((f) => f.label).join(", ");
+                                    const stillNames = recheck.missing.map((f) => f.name);
+                                    clearHighlight();
+                                    highlightMissingFields(stillNames);
+                                    notificationService.add(
+                                        `Hâlâ eksik alanlar var: ${stillLabels}`,
+                                        { type: "danger", sticky: true }
+                                    );
+                                }
+                            } catch (e) {
+                                console.error("[crm_komtas_ux] Error on retry:", e);
+                            }
+                        },
+                    },
+                ],
             }
         );
         return;
@@ -141,6 +189,8 @@ async function promptRequiredFields(ormService, actionService, notificationServi
 
 patch(StatusBarField.prototype, {
     async selectItem(item) {
+        // Clear any previous highlights
+        clearHighlight();
         // Only intercept for crm.lead stage_id field
         if (this.props.record.resModel === "crm.lead" && this.props.name === "stage_id") {
             const record = this.props.record;
