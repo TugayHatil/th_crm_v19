@@ -205,13 +205,8 @@ patch(FormController.prototype, {
 
         if (isCrmLeadDialog && clickParams.special !== "cancel") {
             const record = this.model.root;
-            let saved = false;
-            if (clickParams.special === "save" && this.props.saveRecord) {
-                saved = await this.props.saveRecord(record, clickParams);
-            } else {
-                const params = { reload: !(this.env.inDialog && clickParams.close) };
-                saved = await record.save(params);
-            }
+            // Save directly without triggering dialog close
+            const saved = await record.save({ reload: false });
             if (saved === false) {
                 return saved;
             }
@@ -224,6 +219,7 @@ patch(FormController.prototype, {
                     [psc.leadResId, psc.targetStageId],
                 );
                 if (!recheck.missing || recheck.missing.length === 0) {
+                    // All fields filled - close dialog and move stage
                     pendingStageChange = null;
                     clearHighlight();
                     await psc.ormService.call(
@@ -239,6 +235,7 @@ patch(FormController.prototype, {
                         await psc.model.load();
                     }
                 } else {
+                    // Still missing - keep dialog open, update highlights
                     clearHighlight();
                     const stillLabels = recheck.missing.map((f) => f.label).join(", ");
                     const stillNames = recheck.missing.map((f) => f.name);
@@ -263,6 +260,69 @@ patch(FormController.prototype, {
         }
 
         return await super.beforeExecuteActionButton(clickParams);
+    },
+
+    async save(params) {
+        // Intercept save in dialog mode for crm.lead with pending stage change
+        if (
+            pendingStageChange &&
+            this.env.inDialog &&
+            this.model.root.resModel === "crm.lead" &&
+            this.model.root.resId === pendingStageChange.leadResId
+        ) {
+            const record = this.model.root;
+            const saved = await record.save({ reload: false, ...params });
+            if (saved === false) {
+                return saved;
+            }
+
+            const psc = pendingStageChange;
+            try {
+                const recheck = await psc.ormService.call(
+                    "crm.lead",
+                    "check_required_fields_for_stage",
+                    [psc.leadResId, psc.targetStageId],
+                );
+                if (!recheck.missing || recheck.missing.length === 0) {
+                    pendingStageChange = null;
+                    clearHighlight();
+                    await psc.ormService.call(
+                        "crm.lead",
+                        "move_to_stage",
+                        [psc.leadResId, psc.targetStageId],
+                    );
+                    psc.closeNotification();
+                    if (this.props.onSave) {
+                        this.props.onSave(record, params);
+                    }
+                    if (psc.model && psc.model.load) {
+                        await psc.model.load();
+                    }
+                } else {
+                    clearHighlight();
+                    const stillLabels = recheck.missing.map((f) => f.label).join(", ");
+                    const stillNames = recheck.missing.map((f) => f.name);
+                    highlightMissingFields(stillNames);
+                    psc.closeNotification();
+                    const closeNew = psc.notificationService.add(
+                        `Hâlâ eksik alanlar var: ${stillLabels}`,
+                        { type: "danger", sticky: true }
+                    );
+                    pendingStageChange = { ...psc, closeNotification: closeNew };
+                    return false;
+                }
+            } catch (e) {
+                console.error("[crm_komtas_ux] Error on dialog save() recheck:", e);
+                pendingStageChange = null;
+                clearHighlight();
+                if (this.props.onSave) {
+                    this.props.onSave(record, params);
+                }
+            }
+            return saved;
+        }
+
+        return await super.save(params);
     },
 
     async onRecordSaved(record, changes) {
