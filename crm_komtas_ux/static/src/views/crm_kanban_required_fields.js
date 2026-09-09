@@ -249,6 +249,7 @@ patch(FormController.prototype, {
                         { type: "danger", sticky: true }
                     );
                     pendingStageChange = { ...psc, closeNotification: closeNew };
+                    return false;
                 }
             } catch (e) {
                 console.error("[crm_komtas_ux] Error on dialog save recheck:", e);
